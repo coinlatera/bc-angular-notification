@@ -1,5 +1,5 @@
 define ['app'], (app) ->
-  app.service "Notifications", ($rootScope, NotificationsSimulator) ->
+  app.service "Notifications", ($rootScope) ->
 
     # We store all the notifications in the root scope
     $rootScope.notifications = []
@@ -47,11 +47,6 @@ define ['app'], (app) ->
     this.show = (notification) ->
       $rootScope.notifications.unshift notification
       return
-
-
-    # We start the notifications simulator (and schedule a stop after two minutes)
-    # NotificationsSimulator.start this
-    # setTimeout NotificationsSimulator.stop, 2 * 60 * 1000
 
 
     return
