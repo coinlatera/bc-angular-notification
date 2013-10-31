@@ -1,0 +1,24 @@
+{
+  "name": "bc-angular-notification",
+  "version": "0.0.1",
+  "homepage": "https://github.com/buttercoin/bc-angular-notification",
+  "authors": [
+    "Matthis <matthis.perrin@gmail.com>"
+  ],
+  "description": "A module for localized display of notifications using bootstrap",
+  "main": "main.js",
+  "keywords": [
+    "buttercoin",
+    "angular",
+    "notifications",
+    "bootstrap"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
