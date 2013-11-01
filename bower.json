@@ -6,7 +6,7 @@
     "Matthis <matthis.perrin@gmail.com>"
   ],
   "description": "A module for localized display of notifications using bootstrap",
-  "main": "main.js",
+  "main": "dist/bc-angular-notification.js",
   "keywords": [
     "buttercoin",
     "angular",
