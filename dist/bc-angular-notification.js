@@ -1,1 +1,219 @@
-(function(){define(["app"],function(a){return a.directive("activeNotification",function(a,b){return{restrict:"E",template:'<div ng-show="showNotification" class="urgent-notification active" ng-class="className"><span ng-bind-html-unsafe="title"></span><div class="close"><i class="icon-remove-circle icon-large"></i></div></div>',link:function(c,d){var e,f,g,h,i;return c.showNotification=!1,h=function(a){var g;return c.notification=angular.copy(a),c.title=a.title,c.className=e(a.type),c.$$phase||c.$apply(),g=$(d[0]).find(".urgent-notification"),g.css({display:"block",top:-100}),g.animate({top:25},"slow",function(){return b(function(){return f()},3e3)})},g=!1,f=function(){return g?void 0:(g=!0,a.markAsRead(c.notification),$(d[0]).find(".urgent-notification").fadeOut("slow",i))},$(d[0]).find(".close").bind("click",function(){return f()}),e=function(a){return"error"===a||"urgent"===a?"orange":"pending"===a||"info"===a?"blue":"success"===a?"green":"blue"},i=function(){var a,b,d,e,f;for(g=!1,e=c.allNotifications,f=[],b=0,d=e.length;d>b;b++)if(a=e[b],a.read)f.push(void 0);else if("active"===a.display){if(null!=c.notification&&a.id===c.notification.id)continue;f.push(h(a))}else f.push(void 0);return f},c.$watch("allNotifications",function(a,b){return a!==b?i():void 0},!0),c.allNotifications=a.all(),i()}}})})}).call(this),function(){define(["app"],function(a){return a.directive("stickyNotification",function(a){return{restrict:"E",template:'<div ng-show="showNotification" class="urgent-notification sticky" ng-class="className"><span ng-bind-html-unsafe="title"></span><div class="close"><i class="icon-remove-circle icon-large"></i></div></div>',link:function(b,c){var d,e,f;return b.showNotification=!1,e=function(a){return $(c[0]).find(".urgent-notification").slideUp("slow","linear",function(){return b.notification=a,b.title=a.title,b.className=d(a.type),b.$$phase||b.$apply(),$(c[0]).find(".urgent-notification").slideDown("slow","linear")})},$(c[0]).find(".close").bind("click",function(){return a.markAsRead(b.notification),$(c[0]).find(".urgent-notification").slideUp("slow","linear",f)}),d=function(a){return"error"===a||"urgent"===a?"orange":"pending"===a||"info"===a?"blue":"success"===a?"green":"blue"},f=function(){var a,c,d,f,g;for(f=b.allNotifications,g=[],c=0,d=f.length;d>c;c++)if(a=f[c],a.read)g.push(void 0);else if("sticky"===a.display&&"urgent"===a.type){if(null!=b.notification&&a.id===b.notification.id)continue;g.push(e(a))}else g.push(void 0);return g},b.$watch("allNotifications",function(a,b){return a!==b?f():void 0},!0),b.allNotifications=a.all(),f()}}})})}.call(this),function(){define(["app"],function(a){a.service("Notifications",function(a){a.notifications=[],this.all=function(){return a.notifications},this.unread=function(){var b,c,d,e,f;for(c=[],f=a.notifications,d=0,e=f.length;e>d;d++)b=f[d],b.read||c.push(b);return c},this.read=function(){var b,c,d,e,f;for(c=[],f=a.notifications,d=0,e=f.length;e>d;d++)b=f[d],b.read&&c.push(b);return c},this.markAllAsRead=function(){var b,c,d,e;for(e=a.notifications,c=0,d=e.length;d>c;c++)b=e[c],b.read=!0},this.markAsRead=function(b){var c,d,e,f,g;for(f=a.notifications,g=[],d=0,e=f.length;e>d;d++)c=f[d],c.id===b.id?g.push(c.read=!0):g.push(void 0);return g},this.show=function(b){a.notifications.unshift(b)}})})}.call(this);
+(function() {
+  angular.module('bc.angular-notification', ['bc.notifications', 'bc.active-notification', 'bc.sticky-notification']);
+
+}).call(this);
+
+(function() {
+  angular.module('bc.active-notification', []).directive('activeNotification', function(Notifications, $timeout) {
+    return {
+      restrict: 'E',
+      template: '<div ng-show="showNotification" class="urgent-notification active" ng-class="className">' + '<span ng-bind-html-unsafe="title"></span>' + '<div class="close"><i class="icon-remove-circle icon-large"></i></div>' + '</div>',
+      link: function(scope, element, attrs) {
+        var colorForType, dismissNotification, dismissing, displayNotification, findNewNotification;
+        scope.showNotification = false;
+        displayNotification = function(notification) {
+          var notificationElement;
+          scope.notification = angular.copy(notification);
+          scope.title = notification.title;
+          scope.className = colorForType(notification.type);
+          if (!scope.$$phase) {
+            scope.$apply();
+          }
+          notificationElement = $(element[0]).find('.urgent-notification');
+          notificationElement.css({
+            display: 'block',
+            top: -100
+          });
+          return notificationElement.animate({
+            top: 25
+          }, 'slow', function() {
+            return $timeout(function() {
+              return dismissNotification();
+            }, 3000);
+          });
+        };
+        dismissing = false;
+        dismissNotification = function() {
+          if (!dismissing) {
+            dismissing = true;
+            Notifications.markAsRead(scope.notification);
+            return $(element[0]).find('.urgent-notification').fadeOut('slow', findNewNotification);
+          }
+        };
+        $(element[0]).find('.close').bind('click', function() {
+          return dismissNotification();
+        });
+        colorForType = function(type) {
+          if (type === 'error' || type === 'urgent') {
+            return 'orange';
+          } else if (type === 'pending' || type === 'info') {
+            return 'blue';
+          } else if (type === 'success') {
+            return 'green';
+          } else {
+            return 'blue';
+          }
+        };
+        findNewNotification = function() {
+          var notification, _i, _len, _ref, _results;
+          dismissing = false;
+          _ref = scope.allNotifications;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            notification = _ref[_i];
+            if (!notification.read) {
+              if (notification.display === 'active') {
+                if ((scope.notification != null) && notification.id === scope.notification.id) {
+                  continue;
+                }
+                _results.push(displayNotification(notification));
+              } else {
+                _results.push(void 0);
+              }
+            } else {
+              _results.push(void 0);
+            }
+          }
+          return _results;
+        };
+        scope.$watch('allNotifications', function(newValue, oldValue) {
+          if (newValue !== oldValue) {
+            return findNewNotification();
+          }
+        }, true);
+        scope.allNotifications = Notifications.all();
+        return findNewNotification();
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('bc.sticky-notification', []).directive('stickyNotification', function(Notifications) {
+    return {
+      restrict: 'E',
+      template: '<div ng-show="showNotification" class="urgent-notification sticky" ng-class="className">' + '<span ng-bind-html-unsafe="title"></span>' + '<div class="close"><i class="icon-remove-circle icon-large"></i></div>' + '</div>',
+      link: function(scope, element, attrs) {
+        var colorForType, displayNotification, findNewNotification;
+        scope.showNotification = false;
+        displayNotification = function(notification) {
+          return $(element[0]).find('.urgent-notification').slideUp('slow', 'linear', function() {
+            scope.notification = notification;
+            scope.title = notification.title;
+            scope.className = colorForType(notification.type);
+            if (!scope.$$phase) {
+              scope.$apply();
+            }
+            return $(element[0]).find('.urgent-notification').slideDown('slow', 'linear');
+          });
+        };
+        $(element[0]).find('.close').bind('click', function() {
+          Notifications.markAsRead(scope.notification);
+          return $(element[0]).find('.urgent-notification').slideUp('slow', 'linear', findNewNotification);
+        });
+        colorForType = function(type) {
+          if (type === 'error' || type === 'urgent') {
+            return 'orange';
+          } else if (type === 'pending' || type === 'info') {
+            return 'blue';
+          } else if (type === 'success') {
+            return 'green';
+          } else {
+            return 'blue';
+          }
+        };
+        findNewNotification = function() {
+          var notification, _i, _len, _ref, _results;
+          _ref = scope.allNotifications;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            notification = _ref[_i];
+            if (!notification.read) {
+              if (notification.display === 'sticky' && notification.type === 'urgent') {
+                if ((scope.notification != null) && notification.id === scope.notification.id) {
+                  continue;
+                }
+                _results.push(displayNotification(notification));
+              } else {
+                _results.push(void 0);
+              }
+            } else {
+              _results.push(void 0);
+            }
+          }
+          return _results;
+        };
+        scope.$watch('allNotifications', function(newValue, oldValue) {
+          if (newValue !== oldValue) {
+            return findNewNotification();
+          }
+        }, true);
+        scope.allNotifications = Notifications.all();
+        return findNewNotification();
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module('bc.notifications', []).service("Notifications", function($rootScope) {
+    $rootScope.notifications = [];
+    this.all = function() {
+      return $rootScope.notifications;
+    };
+    this.unread = function() {
+      var notification, unread, _i, _len, _ref;
+      unread = [];
+      _ref = $rootScope.notifications;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        notification = _ref[_i];
+        if (!notification.read) {
+          unread.push(notification);
+        }
+      }
+      return unread;
+    };
+    this.read = function() {
+      var notification, read, _i, _len, _ref;
+      read = [];
+      _ref = $rootScope.notifications;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        notification = _ref[_i];
+        if (notification.read) {
+          read.push(notification);
+        }
+      }
+      return read;
+    };
+    this.markAllAsRead = function() {
+      var notification, _i, _len, _ref;
+      _ref = $rootScope.notifications;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        notification = _ref[_i];
+        notification.read = true;
+      }
+    };
+    this.markAsRead = function(notification) {
+      var notif, _i, _len, _ref, _results;
+      _ref = $rootScope.notifications;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        notif = _ref[_i];
+        if (notif.id === notification.id) {
+          _results.push(notif.read = true);
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+    this.show = function(notification) {
+      $rootScope.notifications.unshift(notification);
+    };
+  });
+
+  return;
+
+}).call(this);

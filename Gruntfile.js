@@ -106,8 +106,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'clean:dist',
     'coffee',
-    'concat',
-    'uglify'
+    'concat'
   ]);
 
   grunt.registerTask('default', ['build']);
