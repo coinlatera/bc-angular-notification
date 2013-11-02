@@ -1,5 +1,5 @@
 (function() {
-  angular.module('bc.angular-notification', ['bc.notification', 'bc.active-notification', 'bc.sticky-notification']);
+  angular.module('bc.angular-notification', ['bc.notifications', 'bc.active-notification', 'bc.sticky-notification']);
 
 }).call(this);
 
