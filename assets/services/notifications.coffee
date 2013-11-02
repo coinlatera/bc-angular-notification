@@ -1,4 +1,4 @@
-angular.module('bc.active-notification', []).service "Notifications", ($rootScope) ->
+angular.module('bc.notifications', []).service "Notifications", ($rootScope) ->
   # We store all the notifications in the root scope
   $rootScope.notifications = []
 

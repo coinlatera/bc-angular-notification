@@ -158,7 +158,7 @@
 }).call(this);
 
 (function() {
-  angular.module('bc.active-notification', []).service("Notifications", function($rootScope) {
+  angular.module('bc.notifications', []).service("Notifications", function($rootScope) {
     $rootScope.notifications = [];
     this.all = function() {
       return $rootScope.notifications;
