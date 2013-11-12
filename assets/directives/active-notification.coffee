@@ -1,4 +1,4 @@
-angular.module('bc.active-notification', []).directive 'activeNotification', (Notifications, $timeout) ->
+angular.module('bc.active-notification', []).directive 'activeNotification', ['Notifications', '$timeout', (Notifications, $timeout) ->
   restrict: 'E',
   template: '<div ng-show="showNotification" class="urgent-notification active" ng-class="className">' +
               '<span ng-bind-html-unsafe="title"></span>' +
@@ -82,3 +82,4 @@ angular.module('bc.active-notification', []).directive 'activeNotification', (No
     # We get all the notifications
     scope.allNotifications = Notifications.all()
     findNewNotification()
+]
