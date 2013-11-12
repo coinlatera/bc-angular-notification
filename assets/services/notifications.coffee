@@ -1,4 +1,4 @@
-angular.module('bc.notifications', []).service "Notifications", ($rootScope) ->
+angular.module('bc.notifications', []).service "Notifications", ['$rootScope', ($rootScope) ->
   # We store all the notifications in the root scope
   $rootScope.notifications = []
 
@@ -45,8 +45,5 @@ angular.module('bc.notifications', []).service "Notifications", ($rootScope) ->
   this.show = (notification) ->
     $rootScope.notifications.unshift notification
     return
-
-
-  return
-  
-return
+ 
+]

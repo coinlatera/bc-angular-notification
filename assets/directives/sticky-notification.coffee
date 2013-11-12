@@ -1,4 +1,4 @@
-angular.module('bc.sticky-notification', []).directive 'stickyNotification', (Notifications) ->
+angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['Notifications', (Notifications) ->
   restrict: 'E',
   template: '<div ng-show="showNotification" class="urgent-notification sticky" ng-class="className">' +
               '<span ng-bind-html-unsafe="title"></span>' +
@@ -73,3 +73,5 @@ angular.module('bc.sticky-notification', []).directive 'stickyNotification', (No
     # We get all the notifications
     scope.allNotifications = Notifications.all()
     findNewNotification()
+
+]

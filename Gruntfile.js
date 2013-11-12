@@ -85,7 +85,7 @@ module.exports = function (grunt) {
     uglify: {
       dist: {
         files: {
-          '<%= yeoman.dist %>/bc-angular-notification.js': [
+          '<%= yeoman.dist %>/bc-angular-notification.min.js': [
             '<%= yeoman.dist %>/bc-angular-notification.js'
           ]
         }
@@ -106,7 +106,8 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'clean:dist',
     'coffee',
-    'concat'
+    'concat',
+    'uglify'
   ]);
 
   grunt.registerTask('default', ['build']);
