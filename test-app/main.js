@@ -12,7 +12,7 @@ angular.module('buttercoinAngularNotificationTestApp', ['bc.angular-notification
       display: displayMode
     };
   };
-  
+
   var counter = 0;
 
   $scope.showRandomNotif = function (displayMode) {
@@ -23,6 +23,9 @@ angular.module('buttercoinAngularNotificationTestApp', ['bc.angular-notification
       var type = Math.floor(Math.random() * 3) % 3;
       type = type == 0 ? 'success' : type == 1 ? 'pending' : 'info';
       Notifications.show(getNotification('This is the ' + type + ' notification no ' + (++counter) + '. It will automatically disappear after a certain amount of time.', type, 'active'));
+    }
+    else if (displayMode === 'banana') {
+      Notifications.show(getNotification('<img src="dancing-banana.gif"/><br/>Yup, you can even put gif in notifications!', 'info', 'active'));
     }
   }
 

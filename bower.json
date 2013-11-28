@@ -25,9 +25,7 @@
     "angular": "~1.0.8"
   },
   "devDependencies": {
-    "coffee-script": "~1.6.3"
-  },
-  "devDependencies": {
-    "bootstrap": "~3.0.2"
+    "bootstrap": "~3.0.2",
+    "font-awesome": "~3.2.1"
   }
 }
