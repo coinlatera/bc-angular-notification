@@ -21,7 +21,7 @@ angular.module('buttercoinAngularNotificationTestApp', ['bc.angular-notification
     }
     else if (displayMode === 'active') {
       var type = Math.floor(Math.random() * 3) % 3;
-      type = type == 0 ? 'success' : type == 1 ? 'pending' : 'info';
+      type = type == 0 ? 'success' : type == 1 ? 'pending' : 'error';
       Notifications.show(getNotification('This is the ' + type + ' notification no ' + (++counter) + '. It will automatically disappear after a certain amount of time.', type, 'active'));
     }
     else if (displayMode === 'banana') {
