@@ -63,6 +63,7 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
       dismissing = false
       for notification in scope.allNotifications
         unless notification.read
+          console.log "test"
           if notification.display is 'active'
             if scope.notification? and notification.id is scope.notification.id
               continue
@@ -76,7 +77,6 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
         # Every time something change, we update the notification
         findNewNotification()
     , true
-
 
 
     # We get all the notifications
