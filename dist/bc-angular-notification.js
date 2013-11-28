@@ -63,7 +63,6 @@
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               notification = _ref[_i];
               if (!notification.read) {
-                console.log("test");
                 if (notification.display === 'active') {
                   if ((scope.notification != null) && notification.id === scope.notification.id) {
                     continue;
@@ -133,6 +132,7 @@
             _results = [];
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               notification = _ref[_i];
+              console.log(notification.display, notification.type);
               if (!notification.read) {
                 if (notification.display === 'sticky' && notification.type === 'urgent') {
                   if ((scope.notification != null) && notification.id === scope.notification.id) {

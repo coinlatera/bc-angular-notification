@@ -60,16 +60,20 @@
     </div>
 
     <div class="container" ng-controller="MainCtrl">
+      
+      <sticky-notification></sticky-notification>
 
       <div class="hero-unit">
         <h1>Hello fellow developers!</h1>
         <p>Ok guys, this is the test application for the notifications.</p>
-        <p><a href="#" class="btn btn-primary btn-large" ng-click="showNotification()">Try it!</a></p>
+        <p>
+          <a href="#" class="btn btn-primary btn-large" ng-click="showRandomNotif('active')">Active notification</a>
+          <a href="#" class="btn btn-primary btn-large" ng-click="showRandomNotif('sticky')">Sticky notification</a>
+        </p>
       </div>
 
       <div class="row">
         <div class="span12">
-          {{test}}
         </div>
       </div>
 
