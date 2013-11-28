@@ -12,37 +12,41 @@
         link: function(scope, element, attrs) {
           var colorForType, dismissNotification, dismissing, displayNotification, findNewNotification;
           scope.showNotification = false;
+          dismissing = false;
           displayNotification = function(notification) {
             var notificationElement;
-            scope.notification = angular.copy(notification);
-            scope.title = notification.title;
-            scope.className = colorForType(notification.type);
-            if (!scope.$$phase) {
-              scope.$apply();
-            }
-            notificationElement = $(element[0]).find('.urgent-notification');
-            notificationElement.css({
-              display: 'block',
-              top: -100
-            });
-            return notificationElement.animate({
-              top: 25
-            }, 'slow', function() {
-              return $timeout(function() {
-                return dismissNotification();
-              }, 3000);
-            });
-          };
-          dismissing = false;
-          dismissNotification = function() {
             if (!dismissing) {
+              scope.notification = angular.copy(notification);
+              scope.title = notification.title;
+              scope.className = colorForType(notification.type);
+              if (!scope.$$phase) {
+                scope.$apply();
+              }
+              notificationElement = $(element[0]).find('.urgent-notification');
+              notificationElement.css({
+                display: 'block',
+                top: -100
+              });
+              return notificationElement.animate({
+                top: 25
+              }, 'slow', function() {
+                return $timeout(function() {
+                  return dismissNotification(notification.id, true, findNewNotification);
+                }, 3000);
+              });
+            }
+          };
+          dismissNotification = function(id, markAsRead, callback) {
+            if (!dismissing && scope.notification.id === id) {
               dismissing = true;
-              Notifications.markAsRead(scope.notification);
-              return $(element[0]).find('.urgent-notification').fadeOut('slow', findNewNotification);
+              if (markAsRead) {
+                Notifications.markAsRead(scope.notification);
+              }
+              return $(element[0]).find('.urgent-notification').fadeOut('slow', callback);
             }
           };
           $(element[0]).find('.close').bind('click', function() {
-            return dismissNotification();
+            return dismissNotification(scope.notification.id, true, findNewNotification);
           });
           colorForType = function(type) {
             if (type === 'error' || type === 'urgent') {
@@ -67,7 +71,15 @@
                   if ((scope.notification != null) && notification.id === scope.notification.id) {
                     continue;
                   }
-                  _results.push(displayNotification(notification));
+                  if ((scope.notification == null) || scope.notification.read) {
+                    _results.push(displayNotification(notification));
+                  } else {
+                    dismissNotification(scope.notification.id, false, function() {
+                      dismissing = false;
+                      return displayNotification(notification);
+                    });
+                    break;
+                  }
                 } else {
                   _results.push(void 0);
                 }
@@ -78,7 +90,7 @@
             return _results;
           };
           scope.$watch('allNotifications', function(newValue, oldValue) {
-            if (newValue !== oldValue) {
+            if (!(newValue === oldValue || dismissing)) {
               return findNewNotification();
             }
           }, true);
@@ -132,7 +144,6 @@
             _results = [];
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               notification = _ref[_i];
-              console.log(notification.display, notification.type);
               if (!notification.read) {
                 if (notification.display === 'sticky' && notification.type === 'urgent') {
                   if ((scope.notification != null) && notification.id === scope.notification.id) {

@@ -53,7 +53,6 @@ angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['N
     # Look for a new notification to display in the notifications pool
     findNewNotification = () ->
       for notification in scope.allNotifications
-        console.log notification.display, notification.type
         unless notification.read
           if notification.display is 'sticky' and notification.type is 'urgent'
             if scope.notification? and notification.id is scope.notification.id

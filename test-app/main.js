@@ -12,7 +12,7 @@ angular.module('buttercoinAngularNotificationTestApp', ['bc.angular-notification
       display: displayMode
     };
   };
-
+  
   var counter = 0;
 
   $scope.showRandomNotif = function (displayMode) {
