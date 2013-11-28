@@ -26,5 +26,8 @@
   },
   "devDependencies": {
     "coffee-script": "~1.6.3"
+  },
+  "devDependencies": {
+    "bootstrap": "~3.0.2"
   }
 }
