@@ -3,19 +3,21 @@
 angular.module('buttercoinAngularNotificationTestApp', ['bc.angular-notification'])
 .controller('MainCtrl', function ($scope, Notifications) {
 
-  var getNotification = function (title, type, displayMode) {
+  var getNotification = function (title, type, displayMode, category) {
     return {
       id: Math.floor(Math.random() * 999999),
       title: title,
       read: false,
       type: type,
-      display: displayMode
+      display: displayMode,
+      category: category,
+      indexInCategory: counter
     };
   };
 
   var counter = 0;
 
-  $scope.showRandomNotif = function (displayMode) {
+  $scope.showRandomNotif = function (displayMode, category) {
     if (displayMode === 'sticky') {
       Notifications.show(getNotification('This is the sticky notification no ' + (++counter) + '. It won\'t go away until the user dismiss it' , 'urgent', 'sticky'));
     }
