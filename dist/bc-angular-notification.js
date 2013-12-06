@@ -32,7 +32,7 @@
               }, 'slow', function() {
                 return $timeout(function() {
                   return dismissNotification(notification.id, true, findNewNotification);
-                }, 3000);
+                }, 2000 + notification.title.length * 80);
               });
             }
           };
