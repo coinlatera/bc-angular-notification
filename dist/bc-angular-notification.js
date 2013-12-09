@@ -28,7 +28,7 @@
                 top: -100
               });
               return notificationElement.animate({
-                top: 25
+                top: 68
               }, 'slow', function() {
                 return $timeout(function() {
                   return dismissNotification(notification.id, true, findNewNotification);
