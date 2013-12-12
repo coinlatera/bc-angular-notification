@@ -11,7 +11,8 @@ angular.module('buttercoinAngularNotificationTestApp', ['bc.angular-notification
       type: type,
       display: displayMode,
       category: category,
-      indexInCategory: counter
+      indexInCategory: counter,
+      customClass: 'notif' + counter
     };
   };
 

@@ -17,6 +17,8 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
         scope.notification = angular.copy(notification)
         scope.title = notification.title
         scope.className = colorForType notification.type
+        if notification.customClass?
+          scope.className += ' ' + notification.customClass
         unless scope.$$phase
           scope.$apply()
 

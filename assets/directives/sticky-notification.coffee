@@ -19,6 +19,8 @@ angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['N
         scope.notification = notification
         scope.title = notification.title
         scope.className = colorForType notification.type
+        if notification.customClass?
+          scope.className += ' ' + notification.customClass
         unless scope.$$phase
           scope.$apply()
 

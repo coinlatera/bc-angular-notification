@@ -19,6 +19,9 @@
               scope.notification = angular.copy(notification);
               scope.title = notification.title;
               scope.className = colorForType(notification.type);
+              if (notification.customClass != null) {
+                scope.className += ' ' + notification.customClass;
+              }
               if (!scope.$$phase) {
                 scope.$apply();
               }
@@ -117,6 +120,9 @@
               scope.notification = notification;
               scope.title = notification.title;
               scope.className = colorForType(notification.type);
+              if (notification.customClass != null) {
+                scope.className += ' ' + notification.customClass;
+              }
               if (!scope.$$phase) {
                 scope.$apply();
               }
