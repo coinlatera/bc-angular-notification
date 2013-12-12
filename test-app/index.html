@@ -70,7 +70,11 @@
           <a href="#" class="btn btn-primary btn-large" ng-click="showRandomNotif('active')">Active notification</a>
           <a href="#" class="btn btn-primary btn-large" ng-click="showRandomNotif('sticky')">Sticky notification</a>
           <a href="#" class="btn btn-warning btn-large" ng-click="showRandomNotif('banana')">Banana notification</a>
-          <a href="#" class="btn btn-info btn-large" ng-click="showRandomNotif('active', 'category1')">Active notifications of same category</a>
+        </p>
+        <p>
+          <a href="#" class="btn btn-info btn-large" ng-click="showRandomNotif('active', 'category1')">Categorized notifications</a>
+          <a href="#" class="btn btn-primary btn-large" ng-click="showLocalizedNotif('known_english_translation')">French notification</a>
+          <a href="#" class="btn btn-primary btn-large" ng-click="showLocalizedNotif('no_french_translation')">English notification</a>
         </p>
       </div>
 
@@ -91,6 +95,7 @@
     <script src="../bower_components/jquery/jquery.min.js"></script>
     <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../bower_components/angular/angular.min.js"></script>
+    <script src="../bower_components/bc-angular-i18n/dist/bc-angular-i18n.js"></script>
     <script src="../dist/bc-angular-notification.js"></script>
     <script src="main.js"></script>
   </body>

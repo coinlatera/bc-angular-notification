@@ -1,5 +1,5 @@
 (function() {
-  angular.module('bc.angular-notification', ['bc.notifications', 'bc.active-notification', 'bc.sticky-notification']);
+  angular.module('bc.angular-notification', ['bc.notifications', 'bc.notifications-builder', 'bc.active-notification', 'bc.sticky-notification']);
 
 }).call(this);
 
@@ -234,6 +234,54 @@
       };
       return this.show = function(notification) {
         $rootScope.notifications.unshift(notification);
+      };
+    }
+  ]);
+
+}).call(this);
+
+(function() {
+  angular.module('bc.notifications-builder', ['bc.angular-i18n']).service('NotificationsBuilder', [
+    '$filter', function($filter) {
+      var postProcessMessage;
+      postProcessMessage = function(message, params) {
+        message = message.replace(/\[blue\]([^\[]*)\[\/blue\]/, '<span class="notif-blue">$1</span>');
+        message = message.replace(/\[green\]([^\[]*)\[\/green\]/, '<span class="notif-green">$1</span>');
+        message = message.replace(/\[button\]([^\[]*)\[\/button\]/, '<a class="notif-link">$1</a>');
+        message = message.replace(/[^\\]_([a-zA-Z0-9]+)_/g, function(text, key) {
+          return text[0] + params[key];
+        });
+        message = message.replace(/^_([a-zA-Z0-9]+)_/g, function(text, key) {
+          return params[key];
+        });
+        message = message.replace(/\\_/g, function(text) {
+          return '_';
+        });
+        return message;
+      };
+      return {
+        buildNotification: function(type, message, displayMode, showInDropdown, params, category, indexInCategory) {
+          if (params == null) {
+            params = {};
+          }
+          return {
+            id: Math.floor(Math.random() * 999999),
+            title: postProcessMessage($filter('translate')(message, true), params),
+            description: '',
+            read: false,
+            type: type,
+            display: displayMode,
+            date: new Date().getTime(),
+            showInDropdown: showInDropdown,
+            button: {
+              url: '',
+              title: ''
+            },
+            category: category,
+            indexInCategory: indexInCategory,
+            customClass: params['customClass'] ? params['customClass'] : ''
+          };
+        }
       };
     }
   ]);

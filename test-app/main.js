@@ -1,7 +1,19 @@
 'use strict';
 
 angular.module('buttercoinAngularNotificationTestApp', ['bc.angular-notification'])
-.controller('MainCtrl', function ($scope, Notifications) {
+                 .config(['$provide', function ($provide) {
+                   $provide.constant('CONFIG', { locale: 'fr_FR' });
+                   $provide.constant('Strings', {
+                      'known_english_translation': {
+                        'en_US': 'We sent you another code via SMS',
+                        'fr_FR': 'Nous vous avons envoyé un nouveau code par SMS'
+                      },
+                     'no_french_translation': {
+                       'en_US': 'I am the English-only version of the target string',
+                     }
+                   });
+                 }])
+                 .controller('MainCtrl', function ($scope, Notifications, NotificationsBuilder) {
 
   var getNotification = function (title, type, displayMode, category) {
     return {
@@ -32,12 +44,9 @@ angular.module('buttercoinAngularNotificationTestApp', ['bc.angular-notification
     else if (displayMode === 'banana') {
       Notifications.show(getNotification('<img src="dancing-banana.gif"/><br/>Yup, you can even put gif in notifications!', 'info', 'active'));
     }
-  }
-
-  $scope.showNotif = function () {
-    Notifications.show(getNotification('Test', 'urgent', 'sticky')); // pending, info, sticky
-    Notifications.show(getNotification('Test', 'success', 'active')); // pending, info, sticky
   };
 
-
+  $scope.showLocalizedNotif = function (key) {
+    Notifications.show(NotificationsBuilder.buildNotification('success', key, 'active', false));
+  };
 });
