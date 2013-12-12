@@ -224,7 +224,7 @@
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           notif = _ref[_i];
-          if (notif.id === notification.id || (notif.category === notification.category && notif.indexInCategory < notification.indexInCategory)) {
+          if (notif.id === notification.id || (notif.category === notification.category && notif.indexInCategory <= notification.indexInCategory)) {
             _results.push(notif.read = true);
           } else {
             _results.push(void 0);
