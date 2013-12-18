@@ -76,6 +76,11 @@
           <a href="#" class="btn btn-primary btn-large" ng-click="showLocalizedNotif('known_english_translation')">French notification</a>
           <a href="#" class="btn btn-primary btn-large" ng-click="showLocalizedNotif('no_french_translation')">English notification</a>
         </p>
+        <p>
+          <a href="#" class="btn btn-info btn-large" ng-click="showRandomNotif('active', 'categoryDuration')">Normal duration</a>
+          <a href="#" class="btn btn-primary btn-large" ng-click="showRandomNotif('active', 'categoryDuration', 1000)">Fast notification</a>
+          <a href="#" class="btn btn-primary btn-large" ng-click="showRandomNotif('active', 'categoryDuration', -1)">Forever notification</a>
+        </p>
       </div>
 
       <div class="row">
