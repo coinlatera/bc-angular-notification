@@ -33,9 +33,13 @@
               return notificationElement.animate({
                 top: 68
               }, 'slow', function() {
-                return $timeout(function() {
-                  return dismissNotification(notification.id, true, findNewNotification);
-                }, 2000 + notification.title.length * 80);
+                var displayDuration;
+                displayDuration = notification.duration != null ? notification.duration : 2000 + notification.title.length * 80;
+                if (displayDuration !== -1) {
+                  return $timeout(function() {
+                    return dismissNotification(notification.id, true, findNewNotification);
+                  }, displayDuration);
+                }
               });
             }
           };
@@ -260,7 +264,7 @@
         return message;
       };
       return {
-        buildNotification: function(type, message, displayMode, showInDropdown, params, category, indexInCategory) {
+        buildNotification: function(type, message, displayMode, showInDropdown, params, category, indexInCategory, duration) {
           if (params == null) {
             params = {};
           }
@@ -279,7 +283,8 @@
             },
             category: category,
             indexInCategory: indexInCategory,
-            customClass: params['customClass'] ? params['customClass'] : ''
+            customClass: params['customClass'] ? params['customClass'] : '',
+            duration: duration
           };
         }
       };

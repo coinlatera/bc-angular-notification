@@ -9,7 +9,7 @@ angular.module('bc.notifications-builder', ['bc.angular-i18n']).service 'Notific
     message = message.replace /\\_/g, (text) -> '_'
     return message
 
-  buildNotification : (type, message, displayMode, showInDropdown, params = {}, category, indexInCategory) ->
+  buildNotification : (type, message, displayMode, showInDropdown, params = {}, category, indexInCategory, duration) ->
     id: Math.floor(Math.random() * 999999)
     title: postProcessMessage($filter('translate')(message, true), params)
     description: ''
@@ -24,5 +24,6 @@ angular.module('bc.notifications-builder', ['bc.angular-i18n']).service 'Notific
     category: category
     indexInCategory: indexInCategory
     customClass: if params['customClass'] then params['customClass'] else ''
+    duration: duration
 ]
 

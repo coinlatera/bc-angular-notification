@@ -31,9 +31,11 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
         notificationElement.animate {
           top: 68
         }, 'slow', () ->
-          $timeout ->
-            dismissNotification notification.id, true, findNewNotification
-          , (2000 + notification.title.length * 80)
+          displayDuration = if notification.duration? then notification.duration else (2000 + notification.title.length * 80)
+          if displayDuration isnt -1
+            $timeout ->
+              dismissNotification notification.id, true, findNewNotification
+            , displayDuration
 
 
     dismissNotification = (id, markAsRead, callback) ->
