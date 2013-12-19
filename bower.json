@@ -23,7 +23,7 @@
   ],
   "dependencies": {
     "angular": "~1.0.8",
-    "bc-angular-i18n": "git@github.com:buttercoin/bc-angular-i18n#master"
+    "bc-angular-i18n": "https://github.com/buttercoin/bc-angular-i18n.git#master"
   },
   "devDependencies": {
     "bootstrap": "~3.0.2",
