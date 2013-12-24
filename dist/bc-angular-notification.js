@@ -15,6 +15,12 @@
           dismissing = false;
           displayNotification = function(notification) {
             var notificationElement;
+            scope.watchedCopy = notification;
+            scope.$watch('watchedCopy', function(value) {
+              if (value.read) {
+                return dismissNotification(value.id, true, findNewNotification);
+              }
+            }, true);
             if (!dismissing) {
               scope.notification = angular.copy(notification);
               scope.title = notification.title;
@@ -130,6 +136,11 @@
               if (!scope.$$phase) {
                 scope.$apply();
               }
+              scope.$watch('notification', function(value) {
+                if (value.read) {
+                  return $(element[0]).find('.urgent-notification').slideUp('slow', 'linear', findNewNotification);
+                }
+              }, true);
               return $(element[0]).find('.urgent-notification').slideDown('slow', 'linear');
             });
           };

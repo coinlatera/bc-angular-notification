@@ -12,6 +12,13 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
 
     # Initialise and display a notification
     displayNotification = (notification) ->
+
+      # Watch for the read attribute to force notification dismiss
+      scope.watchedCopy = notification
+      scope.$watch 'watchedCopy', (value) ->
+        dismissNotification value.id, true, findNewNotification if value.read
+      , true
+
       unless dismissing
         # Bind the notification with the template model
         scope.notification = angular.copy(notification)

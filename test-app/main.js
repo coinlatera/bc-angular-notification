@@ -50,4 +50,8 @@ angular.module('buttercoinAngularNotificationTestApp', ['bc.angular-notification
   $scope.showLocalizedNotif = function (key) {
     Notifications.show(NotificationsBuilder.buildNotification('success', key, 'active', false));
   };
+
+  $scope.emptyQueue = function () {
+    Notifications.markAllAsRead();
+  };
 });

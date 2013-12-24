@@ -24,6 +24,11 @@ angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['N
         unless scope.$$phase
           scope.$apply()
 
+        # Watch for the read attribute to force notification dismiss
+        scope.$watch 'notification', (value) ->
+          $(element[0]).find('.urgent-notification').slideUp 'slow', 'linear', findNewNotification if value.read
+        , true
+
         # Animate the notification apparition
         $(element[0]).find('.urgent-notification').slideDown 'slow', 'linear'
 
