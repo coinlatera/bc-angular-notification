@@ -263,7 +263,6 @@
         message = message.replace(/\[blue\]([^\[]*)\[\/blue\]/, '<span class="notif-blue">$1</span>');
         message = message.replace(/\[green\]([^\[]*)\[\/green\]/, '<span class="notif-green">$1</span>');
         message = message.replace(/\[button\]([^\[]*)\[\/button\]/, '<a class="notif-link">$1</a>');
-        message = message.replace(/\[button url=([^\]]*)\]([^\[]*)\[\/button\]/, '<a class="notif-link" href="$1">$2</a>');
         message = message.replace(/[^\\]_([a-zA-Z0-9]+)_/g, function(text, key) {
           return text[0] + params[key];
         });
@@ -273,6 +272,7 @@
         message = message.replace(/\\_/g, function(text) {
           return '_';
         });
+        message = message.replace(/\[button url=([^\]]*)\]([^\[]*)\[\/button\]/, '<a class="notif-link" href="$1">$2</a>');
         return message;
       };
       return {
