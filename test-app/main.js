@@ -5,8 +5,8 @@ angular.module('buttercoinAngularNotificationTestApp', ['bc.angular-notification
                    $provide.constant('CONFIG', { locale: 'fr_FR' });
                    $provide.constant('Strings', {
                       'known_english_translation': {
-                        'en_US': 'We sent you another code via SMS [button url=#/notifications_i_]Learn more[/button]',
-                        'fr_FR': 'Nous vous avons envoyé un nouveau code par SMS [button url=#/notifications_i_]En savoir plus[/button]'
+                        'en_US': 'We sent you another code via SMS [button url=#/notifications/_$id_]Learn more[/button]',
+                        'fr_FR': 'Nous vous avons envoyé un nouveau code par SMS [button url=#/notifications/_$id_]En savoir plus[/button]'
                       },
                      'no_french_translation': {
                        'en_US': 'I am the English-only version of the target string',

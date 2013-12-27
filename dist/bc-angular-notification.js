@@ -264,10 +264,10 @@
         message = message.replace(/\[green\]([^\[]*)\[\/green\]/, '<span class="notif-green">$1</span>');
         message = message.replace(/\[red\]([^\[]*)\[\/red\]/, '<span class="notif-red">$1</span>');
         message = message.replace(/\[button\]([^\[]*)\[\/button\]/, '<a class="notif-link">$1</a>');
-        message = message.replace(/[^\\]_([a-zA-Z0-9]+)_/g, function(text, key) {
+        message = message.replace(/[^\\]_([a-zA-Z0-9\$]+)_/g, function(text, key) {
           return text[0] + params[key];
         });
-        message = message.replace(/^_([a-zA-Z0-9]+)_/g, function(text, key) {
+        message = message.replace(/^_([a-zA-Z0-9\$]+)_/g, function(text, key) {
           return params[key];
         });
         message = message.replace(/\\_/g, function(text) {
@@ -281,8 +281,9 @@
           if (params == null) {
             params = {};
           }
+          params["$id"] = Math.floor(Math.random() * 999999);
           return {
-            id: Math.floor(Math.random() * 999999),
+            id: params["$id"],
             title: postProcessMessage($filter('translate')(message, true), params),
             description: '',
             read: false,
