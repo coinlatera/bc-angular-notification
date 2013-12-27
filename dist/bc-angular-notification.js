@@ -263,7 +263,8 @@
         message = message.replace(/\[blue\]([^\[]*)\[\/blue\]/, '<span class="notif-blue">$1</span>');
         message = message.replace(/\[green\]([^\[]*)\[\/green\]/, '<span class="notif-green">$1</span>');
         message = message.replace(/\[red\]([^\[]*)\[\/red\]/, '<span class="notif-red">$1</span>');
-        message = message.replace(/\[button\]([^\[]*)\[\/button\]/, '<a class="notif-link">$1</a>');
+        message = message.replace(/\[link\]([^\[]*)\[\/link\]/, '<a class="notif-link">$1</a>');
+        message = message.replace(/\[button\]([^\[]*)\[\/button\]/, '<a class="btn btn-primary notif-button">$1</a>');
         message = message.replace(/[^\\]_([a-zA-Z0-9\$]+)_/g, function(text, key) {
           return text[0] + params[key];
         });
@@ -273,11 +274,12 @@
         message = message.replace(/\\_/g, function(text) {
           return '_';
         });
-        message = message.replace(/\[button url=([^\]]*)\]([^\[]*)\[\/button\]/, '<a class="notif-link" href="$1">$2</a>');
+        message = message.replace(/\[link url=([^\]]*)\]([^\[]*)\[\/link\]/, '<a class="notif-link" href="$1">$2</a>');
+        message = message.replace(/\[button url=([^\]]*)\]([^\[]*)\[\/button\]/, '<a class="btn btn-primary notif-button" href="$1">$2</a>');
         return message;
       };
       return {
-        buildNotification: function(type, message, displayMode, showInDropdown, params, category, indexInCategory, duration) {
+        buildNotification: function(type, message, detailedMessage, displayMode, showInDropdown, params, category, indexInCategory, duration) {
           if (params == null) {
             params = {};
           }
@@ -285,16 +287,12 @@
           return {
             id: params["$id"],
             title: postProcessMessage($filter('translate')(message, true), params),
-            description: '',
+            detailedTitle: postProcessMessage($filter('translate')(detailedMessage, true), params),
             read: false,
             type: type,
             display: displayMode,
             date: new Date().getTime(),
             showInDropdown: showInDropdown,
-            button: {
-              url: '',
-              title: ''
-            },
             category: category,
             indexInCategory: indexInCategory,
             customClass: params['customClass'] ? params['customClass'] : '',
