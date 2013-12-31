@@ -43,6 +43,11 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
             $timeout ->
               dismissNotification notification.id, true, findNewNotification
             , displayDuration
+          else        
+            bodyClick = () ->
+              $('body').unbind 'click', bodyClick
+              dismissNotification notification.id, true, findNewNotification
+            $('body').bind 'click', bodyClick
 
 
     dismissNotification = (id, markAsRead, callback) ->

@@ -39,12 +39,18 @@
               return notificationElement.animate({
                 top: 68
               }, 'slow', function() {
-                var displayDuration;
+                var bodyClick, displayDuration;
                 displayDuration = notification.duration != null ? notification.duration : 2000 + notification.title.length * 80;
                 if (displayDuration !== -1) {
                   return $timeout(function() {
                     return dismissNotification(notification.id, true, findNewNotification);
                   }, displayDuration);
+                } else {
+                  bodyClick = function() {
+                    $('body').unbind('click', bodyClick);
+                    return dismissNotification(notification.id, true, findNewNotification);
+                  };
+                  return $('body').bind('click', bodyClick);
                 }
               });
             }
