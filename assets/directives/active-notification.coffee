@@ -53,7 +53,9 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
     dismissNotification = (id, markAsRead, callback) ->
       if not dismissing and scope.notification.id is id
         dismissing = true
-        if markAsRead then Notifications.markAsRead(scope.notification)
+        if markAsRead
+          Notifications.markAsRead(scope.notification)
+          scope.notification.read = true
         $(element[0]).find('.urgent-notification').fadeOut 'slow', callback
 
 
@@ -82,16 +84,12 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
           if notification.display is 'active'
             if scope.notification? and notification.id is scope.notification.id
               continue
-            if not scope.notification? or scope.notification.read
+            if (not scope.notification?) or scope.notification.read
               displayNotification notification
-            else
-              dismissNotification scope.notification.id, false, () ->
-                dismissing = false
-                displayNotification notification
               break
 
 
-    # Watch for a change in the notification pool
+    #Watch for a change in the notification pool
     scope.$watch 'allNotifications', (newValue, oldValue) ->
       unless newValue is oldValue or dismissing
         # Every time something change, we update the notification

@@ -60,6 +60,7 @@
               dismissing = true;
               if (markAsRead) {
                 Notifications.markAsRead(scope.notification);
+                scope.notification.read = true;
               }
               return $(element[0]).find('.urgent-notification').fadeOut('slow', callback);
             }
@@ -91,13 +92,10 @@
                     continue;
                   }
                   if ((scope.notification == null) || scope.notification.read) {
-                    _results.push(displayNotification(notification));
-                  } else {
-                    dismissNotification(scope.notification.id, false, function() {
-                      dismissing = false;
-                      return displayNotification(notification);
-                    });
+                    displayNotification(notification);
                     break;
+                  } else {
+                    _results.push(void 0);
                   }
                 } else {
                   _results.push(void 0);
