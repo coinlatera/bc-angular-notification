@@ -1,4 +1,4 @@
-angular.module('bc.active-notification', []).directive 'activeNotification', ['Notifications', '$timeout', (Notifications, $timeout) ->
+angular.module('bc.active-notification', []).directive 'activeNotification', ['Notifications', 'NotificationsUI', '$timeout', '$rootScope', (Notifications, NotificationsUI, $timeout, $rootScope) ->
   restrict: 'E',
   template: '<div ng-show="showNotification" class="urgent-notification active" ng-class="className">' +
               '<span ng-bind-html-unsafe="title"></span>' +
@@ -89,11 +89,18 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
               break
 
 
-    #Watch for a change in the notification pool
+    # Watch for a change in the notification pool
     scope.$watch 'allNotifications', (newValue, oldValue) ->
+      console.log $rootScope
       unless newValue is oldValue or dismissing
         # Every time something change, we update the notification
         findNewNotification()
+    , true
+
+    # Watch for a change in the NotificationUI service
+    scope.state = NotificationsUI.state()
+    scope.$watch 'state', (newValue, oldValue) ->
+      console.log oldValue, newValue
     , true
 
 
