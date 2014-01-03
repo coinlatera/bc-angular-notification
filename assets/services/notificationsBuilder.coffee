@@ -13,7 +13,7 @@ angular.module('bc.notifications-builder', ['bc.angular-i18n']).service 'Notific
     message = message.replace /\[button url=([^\]]*)\]([^\[]*)\[\/button\]/, '<a class="btn btn-primary notif-button" href="$1">$2</a>'
     return message
 
-  buildNotification : (type, message, detailedMessage, displayMode, showInDropdown, params = {}, category, indexInCategory, duration) ->
+  buildNotification : (type, message, detailedMessage, displayMode, urgent, showInDropdown, params = {}, duration) ->
     params["$id"] = Math.floor(Math.random() * 999999)
     return {
       id: params["$id"]
@@ -22,10 +22,9 @@ angular.module('bc.notifications-builder', ['bc.angular-i18n']).service 'Notific
       read: false
       type: type
       display: displayMode
+      urgent: urgent
       date: new Date().getTime()
       showInDropdown: showInDropdown
-      category: category
-      indexInCategory: indexInCategory
       customClass: if params['customClass'] then params['customClass'] else ''
       duration: duration
     }
