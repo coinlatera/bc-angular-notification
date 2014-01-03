@@ -1,11 +1,11 @@
 (function() {
-  angular.module('bc.angular-notification', ['bc.notifications', 'bc.notifications-builder', 'bc.active-notification', 'bc.sticky-notification']);
+  angular.module('bc.angular-notification', ['bc.notifications', 'bc.notifications-builder', 'bc.notifications-ui', 'bc.active-notification', 'bc.sticky-notification']);
 
 }).call(this);
 
 (function() {
   angular.module('bc.active-notification', []).directive('activeNotification', [
-    'Notifications', '$timeout', function(Notifications, $timeout) {
+    'Notifications', 'NotificationsUI', '$timeout', '$rootScope', function(Notifications, NotificationsUI, $timeout, $rootScope) {
       return {
         restrict: 'E',
         template: '<div ng-show="showNotification" class="urgent-notification active" ng-class="className">' + '<span ng-bind-html-unsafe="title"></span>' + '<div class="close"><i class="icon-remove-circle icon-large"></i></div>' + '</div>',
@@ -56,12 +56,13 @@
             }
           };
           dismissNotification = function(id, markAsRead, callback) {
-            if (!dismissing && scope.notification.id === id) {
+            if (!dismissing && (scope.notification != null) && scope.notification.id === id) {
               dismissing = true;
               if (markAsRead) {
                 Notifications.markAsRead(scope.notification);
                 scope.notification.read = true;
               }
+              delete scope.notification;
               return $(element[0]).find('.urgent-notification').fadeOut('slow', callback);
             }
           };
@@ -82,33 +83,42 @@
           findNewNotification = function() {
             var notification, _i, _len, _ref, _results;
             dismissing = false;
-            _ref = scope.allNotifications;
-            _results = [];
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              notification = _ref[_i];
-              if (!notification.read) {
-                if (notification.display === 'active') {
-                  if ((scope.notification != null) && notification.id === scope.notification.id) {
-                    continue;
-                  }
-                  if ((scope.notification == null) || scope.notification.read) {
-                    displayNotification(notification);
-                    break;
+            if (scope.notification == null) {
+              _ref = scope.allNotifications;
+              _results = [];
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                notification = _ref[_i];
+                if (!(notification.read || (scope.state.paused && !notification.urgent))) {
+                  if (notification.display === 'active') {
+                    if ((scope.notification == null) || scope.notification.read) {
+                      displayNotification(notification);
+                      break;
+                    } else {
+                      _results.push(void 0);
+                    }
                   } else {
                     _results.push(void 0);
                   }
                 } else {
                   _results.push(void 0);
                 }
-              } else {
-                _results.push(void 0);
               }
+              return _results;
             }
-            return _results;
           };
           scope.$watch('allNotifications', function(newValue, oldValue) {
             if (!(newValue === oldValue || dismissing)) {
               return findNewNotification();
+            }
+          }, true);
+          scope.state = NotificationsUI.state();
+          scope.$watch('state', function(newValue, oldValue) {
+            if ((newValue != null) && (newValue.paused != null) && ((oldValue == null) || (oldValue.paused == null) || newValue.paused !== oldValue.paused)) {
+              if (scope.state.paused && (scope.notification != null) && !scope.notification.urgent && !dismissing) {
+                return dismissNotification(scope.notification.id, false, findNewNotification);
+              } else if (!dismissing) {
+                return findNewNotification();
+              }
             }
           }, true);
           scope.allNotifications = Notifications.all();
@@ -243,7 +253,7 @@
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           notif = _ref[_i];
-          if (notif.id === notification.id || (notif.category === notification.category && notif.indexInCategory <= notification.indexInCategory)) {
+          if (notif.id === notification.id) {
             _results.push(notif.read = true);
           } else {
             _results.push(void 0);
@@ -252,7 +262,7 @@
         return _results;
       };
       return this.show = function(notification) {
-        $rootScope.notifications.unshift(notification);
+        $rootScope.notifications.push(notification);
       };
     }
   ]);
@@ -283,9 +293,12 @@
         return message;
       };
       return {
-        buildNotification: function(type, message, detailedMessage, displayMode, showInDropdown, params, category, indexInCategory, duration) {
+        buildNotification: function(type, message, detailedMessage, displayMode, urgent, showInDropdown, params, duration) {
           if (params == null) {
             params = {};
+          }
+          if (duration == null) {
+            duration = void 0;
           }
           params["$id"] = Math.floor(Math.random() * 999999);
           return {
@@ -295,14 +308,33 @@
             read: false,
             type: type,
             display: displayMode,
+            urgent: urgent,
             date: new Date().getTime(),
             showInDropdown: showInDropdown,
-            category: category,
-            indexInCategory: indexInCategory,
             customClass: params['customClass'] ? params['customClass'] : '',
             duration: duration
           };
         }
+      };
+    }
+  ]);
+
+}).call(this);
+
+(function() {
+  angular.module('bc.notifications-ui', []).service("NotificationsUI", [
+    '$rootScope', function($rootScope) {
+      $rootScope.state = {
+        paused: false
+      };
+      this.pause = function() {
+        return $rootScope.state.paused = true;
+      };
+      this.resume = function() {
+        return $rootScope.state.paused = false;
+      };
+      return this.state = function() {
+        return $rootScope.state;
       };
     }
   ]);

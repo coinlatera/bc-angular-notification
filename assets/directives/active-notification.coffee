@@ -1,4 +1,4 @@
-angular.module('bc.active-notification', []).directive 'activeNotification', ['Notifications', '$timeout', (Notifications, $timeout) ->
+angular.module('bc.active-notification', []).directive 'activeNotification', ['Notifications', 'NotificationsUI', '$timeout', '$rootScope', (Notifications, NotificationsUI, $timeout, $rootScope) ->
   restrict: 'E',
   template: '<div ng-show="showNotification" class="urgent-notification active" ng-class="className">' +
               '<span ng-bind-html-unsafe="title"></span>' +
@@ -51,11 +51,12 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
 
 
     dismissNotification = (id, markAsRead, callback) ->
-      if not dismissing and scope.notification.id is id
+      if not dismissing and scope.notification? and scope.notification.id is id
         dismissing = true
         if markAsRead
           Notifications.markAsRead(scope.notification)
           scope.notification.read = true
+        delete scope.notification
         $(element[0]).find('.urgent-notification').fadeOut 'slow', callback
 
 
@@ -79,21 +80,34 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
     # Look for a new notification to display in the notifications pool
     findNewNotification = () ->
       dismissing = false
-      for notification in scope.allNotifications
-        unless notification.read
-          if notification.display is 'active'
-            if scope.notification? and notification.id is scope.notification.id
-              continue
-            if (not scope.notification?) or scope.notification.read
-              displayNotification notification
-              break
+      unless scope.notification?
+        for notification in scope.allNotifications
+          unless notification.read or (scope.state.paused and not notification.urgent)
+            if notification.display is 'active'
+              if (not scope.notification?) or scope.notification.read
+                displayNotification notification
+                break
 
 
-    #Watch for a change in the notification pool
+    # Watch for a change in the notification pool
     scope.$watch 'allNotifications', (newValue, oldValue) ->
       unless newValue is oldValue or dismissing
         # Every time something change, we update the notification
         findNewNotification()
+    , true
+
+    # Watch for a change in the NotificationUI service
+    scope.state = NotificationsUI.state()
+    scope.$watch 'state', (newValue, oldValue) ->
+      # Check for a real change
+      if newValue? and newValue.paused? and (not oldValue? or not oldValue.paused? or newValue.paused isnt oldValue.paused)
+        # If we just paused and we are not displaying a urgent notification
+        # or dismissing it we dismiss it
+        if scope.state.paused and scope.notification? and not scope.notification.urgent and not dismissing
+          dismissNotification scope.notification.id, false, findNewNotification
+        # Refresh the notification
+        else if not dismissing
+          findNewNotification()
     , true
 
 

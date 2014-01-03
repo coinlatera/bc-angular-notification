@@ -37,13 +37,13 @@ angular.module('bc.notifications', []).service "Notifications", ['$rootScope', (
   # Set the flag `read` to true for the corresponding notification
   this.markAsRead = (notification) ->
     for notif in $rootScope.notifications
-      if notif.id is notification.id or (notif.category is notification.category and notif.indexInCategory <= notification.indexInCategory)
+      if notif.id is notification.id
         notif.read = true
 
 
   # Add a new notification to the notifications array
   this.show = (notification) ->
-    $rootScope.notifications.unshift notification
+    $rootScope.notifications.push notification
     return
  
 ]
