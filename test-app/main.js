@@ -13,20 +13,10 @@ angular.module('buttercoinAngularNotificationTestApp', ['bc.angular-notification
                      }
                    });
                  }])
-                 .controller('MainCtrl', function ($scope, Notifications, NotificationsBuilder) {
+                 .controller('MainCtrl', function ($scope, Notifications, NotificationsBuilder, NotificationsUI) {
 
-  var getNotification = function (title, type, displayMode, category, duration) {
-    return {
-      id: Math.floor(Math.random() * 999999),
-      title: title,
-      read: false,
-      type: type,
-      display: displayMode,
-      category: category,
-      indexInCategory: counter,
-      customClass: 'notif' + counter,
-      duration: duration
-    };
+  var getNotification = function (title, type, displayMode, category, duration, urgent) {
+    return NotificationsBuilder.buildNotification(type, title, '', displayMode, urgent, false, {}, duration);
   };
 
   var counter = 0;
@@ -48,10 +38,19 @@ angular.module('buttercoinAngularNotificationTestApp', ['bc.angular-notification
   };
 
   $scope.showLocalizedNotif = function (key) {
-    Notifications.show(NotificationsBuilder.buildNotification('success', key, '', 'active', false, {i: 23}));
+    Notifications.show(NotificationsBuilder.buildNotification('success', key, '', 'active', false, false, {i: 23}));
   };
 
   $scope.emptyQueue = function () {
     Notifications.markAllAsRead();
   };
+
+  $scope.pause = function () {
+    NotificationsUI.pause();
+  }
+
+  $scope.resume = function () {
+    NotificationsUI.resume();
+  }
+
 });
