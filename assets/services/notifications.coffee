@@ -43,7 +43,7 @@ angular.module('bc.notifications', []).service "Notifications", ['$rootScope', (
 
   # Add a new notification to the notifications array
   this.show = (notification) ->
-    $rootScope.notifications.unshift notification
+    $rootScope.notifications.push notification
     return
  
 ]
