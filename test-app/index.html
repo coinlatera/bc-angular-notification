@@ -72,14 +72,15 @@
           <a href="#" class="btn btn-warning btn-large" ng-click="showRandomNotif('banana')">Banana notification</a>
         </p>
         <p>
-          <a href="#" class="btn btn-info btn-large" ng-click="showRandomNotif('active', 'category1')">Categorized notifications</a>
+          <a href="#" class="btn btn-info btn-large" ng-click="showRandomNotif('active')">Categorized notifications</a>
           <a href="#" class="btn btn-primary btn-large" ng-click="showLocalizedNotif('known_english_translation')">French notification</a>
           <a href="#" class="btn btn-primary btn-large" ng-click="showLocalizedNotif('no_french_translation')">English notification</a>
         </p>
         <p>
-          <a href="#" class="btn btn-info btn-large" ng-click="showRandomNotif('active', 'categoryDuration')">Normal duration</a>
-          <a href="#" class="btn btn-primary btn-large" ng-click="showRandomNotif('active', 'categoryDuration', 1000)">Fast notification</a>
-          <a href="#" class="btn btn-primary btn-large" ng-click="showRandomNotif('active', 'categoryDuration', -1)">Forever notification</a>
+          <a href="#" class="btn btn-info btn-large" ng-click="showRandomNotif('active')">Normal duration</a>
+          <a href="#" class="btn btn-primary btn-large" ng-click="showRandomNotif('active', 1000)">Fast notification</a>
+          <a href="#" class="btn btn-primary btn-large" ng-click="showRandomNotif('active', -1)">Forever notification</a>
+          <a href="#" class="btn btn-danger btn-large" ng-click="showRandomNotif('active', -1, true)">Urgent notification</a>
         </p>
         <p>
           <a href="#" class="btn btn-danger btn-large" ng-click="emptyQueue()">Empty queue</a>
