@@ -80,14 +80,13 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
     # Look for a new notification to display in the notifications pool
     findNewNotification = () ->
       dismissing = false
-      for notification in scope.allNotifications
-        unless notification.read or (scope.state.paused and not notification.urgent)
-          if notification.display is 'active'
-            if scope.notification? and notification.id is scope.notification.id
-              continue
-            if (not scope.notification?) or scope.notification.read
-              displayNotification notification
-              break
+      unless scope.notification?
+        for notification in scope.allNotifications
+          unless notification.read or (scope.state.paused and not notification.urgent)
+            if notification.display is 'active'
+              if (not scope.notification?) or scope.notification.read
+                displayNotification notification
+                break
 
 
     # Watch for a change in the notification pool
