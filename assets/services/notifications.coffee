@@ -41,6 +41,20 @@ angular.module('bc.notifications', []).service "Notifications", ['$rootScope', (
         notif.read = true
 
 
+  # Remove a notification from the notification array
+  this.remove = (notifId) ->
+    i = 0
+    while (i < $rootScope.notifications.length)
+      if $rootScope.notifications[i].id is notification.id
+        $rootScope.notifications.splice(i, 1)
+      i++
+
+
+  # Remove all notifications from the notification array
+  this.removeAll = () ->
+    $rootScope.notifications = []
+
+
   # Add a new notification to the notifications array
   this.show = (notification) ->
     $rootScope.notifications.push notification

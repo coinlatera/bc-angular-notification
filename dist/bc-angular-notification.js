@@ -261,6 +261,21 @@
         }
         return _results;
       };
+      this.remove = function(notifId) {
+        var i, _results;
+        i = 0;
+        _results = [];
+        while (i < $rootScope.notifications.length) {
+          if ($rootScope.notifications[i].id === notification.id) {
+            $rootScope.notifications.splice(i, 1);
+          }
+          _results.push(i++);
+        }
+        return _results;
+      };
+      this.removeAll = function() {
+        return $rootScope.notifications = [];
+      };
       return this.show = function(notification) {
         $rootScope.notifications.push(notification);
       };
