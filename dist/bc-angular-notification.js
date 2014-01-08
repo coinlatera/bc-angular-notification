@@ -122,6 +122,9 @@
             }
           }, true);
           scope.allNotifications = Notifications.all();
+          $rootScope.$watch('notifications', function() {
+            return scope.allNotifications = Notifications.all();
+          }, true);
           return findNewNotification();
         }
       };

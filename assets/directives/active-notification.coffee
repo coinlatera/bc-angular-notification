@@ -113,5 +113,8 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
 
     # We get all the notifications
     scope.allNotifications = Notifications.all()
+    $rootScope.$watch 'notifications', () ->
+      scope.allNotifications = Notifications.all()
+    , true
     findNewNotification()
 ]
