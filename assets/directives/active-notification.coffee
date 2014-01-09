@@ -43,7 +43,7 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
             $timeout ->
               dismissNotification notification.general.id, true, findNewNotification
             , displayDuration
-          else        
+          else
             bodyClick = () ->
               $('body').unbind 'click', bodyClick
               dismissNotification notification.general.id, true, findNewNotification
@@ -81,7 +81,7 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
     findNewNotification = () ->
       dismissing = false
       unless scope.notification?
-        for notification in scope.allNotifications
+        for notification in Notifications.all()
           unless notification.general.read or (scope.state.paused and not notification.display.urgent)
             if notification.display.mode is 'active'
               if (not scope.notification?) or scope.notification.general.read
@@ -90,7 +90,7 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
 
 
     # Watch for a change in the notification pool
-    scope.$watch 'allNotifications', (newValue, oldValue) ->
+    $rootScope.$watch 'notifications', (newValue, oldValue) ->
       unless newValue is oldValue or dismissing
         # Every time something change, we update the notification
         findNewNotification()
@@ -112,9 +112,5 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
 
 
     # We get all the notifications
-    scope.allNotifications = Notifications.all()
-    $rootScope.$watch 'notifications', () ->
-      scope.allNotifications = Notifications.all()
-    , true
     findNewNotification()
 ]

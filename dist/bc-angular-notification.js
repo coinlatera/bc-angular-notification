@@ -84,7 +84,7 @@
             var notification, _i, _len, _ref, _results;
             dismissing = false;
             if (scope.notification == null) {
-              _ref = scope.allNotifications;
+              _ref = Notifications.all();
               _results = [];
               for (_i = 0, _len = _ref.length; _i < _len; _i++) {
                 notification = _ref[_i];
@@ -106,7 +106,7 @@
               return _results;
             }
           };
-          scope.$watch('allNotifications', function(newValue, oldValue) {
+          $rootScope.$watch('notifications', function(newValue, oldValue) {
             if (!(newValue === oldValue || dismissing)) {
               return findNewNotification();
             }
@@ -121,10 +121,6 @@
               }
             }
           }, true);
-          scope.allNotifications = Notifications.all();
-          $rootScope.$watch('notifications', function() {
-            return scope.allNotifications = Notifications.all();
-          }, true);
           return findNewNotification();
         }
       };
@@ -135,37 +131,15 @@
 
 (function() {
   angular.module('bc.sticky-notification', []).directive('stickyNotification', [
-    'Notifications', function(Notifications) {
+    'Notifications', '$rootScope', '$timeout', function(Notifications, $rootScope, $timeout) {
       return {
         restrict: 'E',
-        template: '<div ng-show="showNotification" class="urgent-notification sticky" ng-class="className">' + '<span ng-bind-html-unsafe="title"></span>' + '<div class="close"><i class="icon-remove-circle icon-large"></i></div>' + '</div>',
+        template: '<div ng-repeat="notif in stickyNotifications" id="notif-{{notif.general.id}}" class="urgent-notification sticky" ng-class="colorForType(notif.display.type)">' + '<span ng-bind-html-unsafe="notif.content.message"></span>' + '<div class="close" ng-click="close(notif)"><i class="icon-remove-circle icon-large"></i></div>' + '</div>',
         link: function(scope, element, attrs) {
-          var colorForType, displayNotification, findNewNotification;
-          scope.showNotification = false;
-          displayNotification = function(notification) {
-            return $(element[0]).find('.urgent-notification').slideUp('slow', 'linear', function() {
-              scope.notification = notification;
-              scope.title = notification.title;
-              scope.className = colorForType(notification.type);
-              if (notification.customClass != null) {
-                scope.className += ' ' + notification.customClass;
-              }
-              if (!scope.$$phase) {
-                scope.$apply();
-              }
-              scope.$watch('notification', function(value) {
-                if (value.read) {
-                  return $(element[0]).find('.urgent-notification').slideUp('slow', 'linear', findNewNotification);
-                }
-              }, true);
-              return $(element[0]).find('.urgent-notification').slideDown('slow', 'linear');
-            });
+          scope.close = function(notif) {
+            return Notifications.markAsRead(notif);
           };
-          $(element[0]).find('.close').bind('click', function() {
-            Notifications.markAsRead(scope.notification);
-            return $(element[0]).find('.urgent-notification').slideUp('slow', 'linear', findNewNotification);
-          });
-          colorForType = function(type) {
+          scope.colorForType = function(type) {
             if (type === 'error' || type === 'urgent') {
               return 'orange';
             } else if (type === 'pending' || type === 'info') {
@@ -176,34 +150,21 @@
               return 'blue';
             }
           };
-          findNewNotification = function() {
-            var notification, _i, _len, _ref, _results;
-            _ref = scope.allNotifications;
-            _results = [];
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              notification = _ref[_i];
-              if (!notification.read) {
-                if (notification.display === 'sticky' && notification.type === 'urgent') {
-                  if ((scope.notification != null) && notification.id === scope.notification.id) {
-                    continue;
-                  }
-                  _results.push(displayNotification(notification));
-                } else {
-                  _results.push(void 0);
-                }
-              } else {
-                _results.push(void 0);
-              }
-            }
-            return _results;
-          };
-          scope.$watch('allNotifications', function(newValue, oldValue) {
+          scope.stickyNotifications = [];
+          return $rootScope.$watch('notifications', function(newValue, oldValue) {
             if (newValue !== oldValue) {
-              return findNewNotification();
+              return $timeout(function() {
+                var notif, _i, _len;
+                scope.stickyNotifications = [];
+                for (_i = 0, _len = newValue.length; _i < _len; _i++) {
+                  notif = newValue[_i];
+                  if (!notif.general.read && notif.display.mode === 'sticky') {
+                    scope.stickyNotifications.push(notif);
+                  }
+                }
+              });
             }
           }, true);
-          scope.allNotifications = Notifications.all();
-          return findNewNotification();
         }
       };
     }
