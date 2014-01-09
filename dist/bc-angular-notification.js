@@ -292,75 +292,35 @@
 (function() {
   angular.module('bc.notifications-builder', ['bc.angular-i18n']).service('NotificationsBuilder', [
     '$filter', function($filter) {
-      this.postProcessMessage = function(message, params) {
-        message = message.replace(/\[blue\]([^\[]*)\[\/blue\]/, '<span class="notif-blue">$1</span>');
-        message = message.replace(/\[green\]([^\[]*)\[\/green\]/, '<span class="notif-green">$1</span>');
-        message = message.replace(/\[red\]([^\[]*)\[\/red\]/, '<span class="notif-red">$1</span>');
-        message = message.replace(/\[link\]([^\[]*)\[\/link\]/, '<a class="notif-link">$1</a>');
-        message = message.replace(/\[button\]([^\[]*)\[\/button\]/, '<a class="btn btn-primary notif-button">$1</a>');
-        message = message.replace(/[^\\]_([a-zA-Z0-9\$]+)_/g, function(text, key) {
-          return text[0] + params[key];
-        });
-        message = message.replace(/^_([a-zA-Z0-9\$]+)_/g, function(text, key) {
-          return params[key];
-        });
-        message = message.replace(/\\_/g, function(text) {
-          return '_';
-        });
-        message = message.replace(/\[link url=([^\]]*)\]([^\[]*)\[\/link\]/, '<a class="notif-link" href="$1">$2</a>');
-        message = message.replace(/\[button url=([^\]]*)\]([^\[]*)\[\/button\]/, '<a class="btn btn-primary notif-button" href="$1">$2</a>');
-        return message;
+      this.buildNotification = function(notification) {
+        return notification = $.extend(true, this.defaults(), notification);
       };
-      this.buildNotification = function(type, message, detailedMessage, displayMode, urgent, showInDropdown, params, duration) {
-        if (params == null) {
-          params = {};
-        }
-        if (duration == null) {
-          duration = void 0;
-        }
-        params["$id"] = Math.floor(Math.random() * 999999);
+      this.defaults = function() {
+        var id;
+        id = Math.floor(Math.random() * 999999);
         return {
-          id: params["$id"],
-          title: this.postProcessMessage($filter('translate')(message, true), params),
-          detailedTitle: this.postProcessMessage($filter('translate')(detailedMessage, true), params),
-          read: false,
-          type: type,
-          display: displayMode,
-          urgent: urgent,
-          date: new Date().getTime(),
-          showInDropdown: showInDropdown,
-          customClass: params['customClass'] ? params['customClass'] : '',
-          duration: duration
+          general: {
+            id: id,
+            date: new Date().getTime(),
+            read: false
+          },
+          content: {
+            message: '',
+            details: '',
+            params: {
+              id: id
+            }
+          },
+          display: {
+            mode: 'silent',
+            location: '',
+            type: 'success',
+            dropdown: false,
+            duration: null,
+            customClass: ''
+          }
         };
       };
-      ({
-        defaults: function() {
-          var id;
-          id = Math.floor(Math.random() * 999999);
-          return {
-            general: {
-              id: id,
-              date: new Date().getTime(),
-              read: false
-            },
-            content: {
-              message: '',
-              details: '',
-              params: {
-                id: id
-              }
-            },
-            display: {
-              mode: 'silent',
-              location: '',
-              type: 'success',
-              dropdown: false,
-              duration: null,
-              customClass: ''
-            }
-          };
-        }
-      });
       return this;
     }
   ]);
