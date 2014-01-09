@@ -18,6 +18,7 @@ angular.module('bc.notifications-builder', ['bc.angular-i18n']).service 'Notific
     notification = $.extend true, this.defaults(), notification
     notification.content.message = postProcessMessage($filter('translate')(notification.content.message, true), notification.content.params)
     notification.content.details = postProcessMessage($filter('translate')(notification.content.details, true), notification.content.params)
+    return notification
 
 
   this.defaults = () ->
@@ -34,6 +35,7 @@ angular.module('bc.notifications-builder', ['bc.angular-i18n']).service 'Notific
     display:
       mode: 'silent'             # 'silent', 'active' or 'sticky'
       location: ''               # id of the directive where to display the notification (only used for 'sticky' mode)
+      urgent: false              # define if the notification should be shown even if the NotificationsUI has been paused
       type: 'success'            # 'success', 'info' or 'error'
       dropdown: false            # defines if the notification should be displayed in the dropdown and notifications page
       duration: null             # `null`, `positive integer` or -1
