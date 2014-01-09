@@ -225,7 +225,7 @@
         _ref = $rootScope.notifications;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           notification = _ref[_i];
-          if (!notification.read) {
+          if (!notification.general.read) {
             unread.push(notification);
           }
         }
@@ -237,7 +237,7 @@
         _ref = $rootScope.notifications;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           notification = _ref[_i];
-          if (notification.read) {
+          if (notification.general.read) {
             read.push(notification);
           }
         }
@@ -257,8 +257,8 @@
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           notif = _ref[_i];
-          if (notif.id === notification.id) {
-            _results.push(notif.read = true);
+          if (notif.general.id === notification.general.id) {
+            _results.push(notif.general.read = true);
           } else {
             _results.push(void 0);
           }
@@ -270,7 +270,7 @@
         i = 0;
         _results = [];
         while (i < $rootScope.notifications.length) {
-          if ($rootScope.notifications[i].id === notification.id) {
+          if ($rootScope.notifications[i].general.id === notification.general.id) {
             $rootScope.notifications.splice(i, 1);
           }
           _results.push(i++);
