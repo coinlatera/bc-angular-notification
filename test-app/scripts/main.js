@@ -3,7 +3,17 @@
 app.controller('MainCtrl', function ($scope, Notifications, NotificationsBuilder, NotificationsUI) {
 
   var getNotification = function (title, type, displayMode, duration, urgent) {
-    return NotificationsBuilder.buildNotification(type, title, '', displayMode, urgent, false, {}, duration);
+    return NotificationsBuilder.buildNotification({
+      content: {
+        message: title
+      },
+      display: {
+        type: type,
+        mode: displayMode,
+        duration: duration,
+        urgent: urgent
+      }
+    });
   };
 
   var counter = 0;
@@ -14,7 +24,7 @@ app.controller('MainCtrl', function ($scope, Notifications, NotificationsBuilder
     }
     else if (displayMode === 'active') {
       var type = Math.floor(Math.random() * 3) % 3;
-      type = type == 0 ? 'success' : type == 1 ? 'pending' : 'error';
+      type = type == 0 ? 'success' : type == 1 ? 'info' : 'error';
       var titleNo = Math.floor(Math.random() * 3) % 3;
       var title = titleNo == 0 ? "Hey there!" : type == 1 ? ('This is the ' + type + ' notification no ' + (++counter)) : ('This is the ' + type + ' notification no ' + (++counter) + '. It will automatically disappear after a certain amount of time.');
       Notifications.show(getNotification(title, type, 'active', duration, urgent));
@@ -25,7 +35,15 @@ app.controller('MainCtrl', function ($scope, Notifications, NotificationsBuilder
   };
 
   $scope.showLocalizedNotif = function (key) {
-    Notifications.show(NotificationsBuilder.buildNotification('success', key, '', 'active', false, false, {i: 23}));
+    Notifications.show(NotificationsBuilder.buildNotification({
+      content: {
+        message: key
+      },
+      display: {
+        type: 'success',
+        mode: 'active'
+      }
+    }));
   };
 
   $scope.emptyQueue = function () {

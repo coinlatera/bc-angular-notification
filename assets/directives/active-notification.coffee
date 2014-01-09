@@ -1,7 +1,7 @@
 angular.module('bc.active-notification', []).directive 'activeNotification', ['Notifications', 'NotificationsUI', '$timeout', '$rootScope', (Notifications, NotificationsUI, $timeout, $rootScope) ->
   restrict: 'E',
   template: '<div ng-show="showNotification" class="urgent-notification active" ng-class="className">' +
-              '<span ng-bind-html-unsafe="title"></span>' +
+              '<span ng-bind-html-unsafe="message"></span>' +
               '<div class="close"><i class="icon-remove-circle icon-large"></i></div>' +
             '</div>',
   link: (scope, element, attrs) ->
@@ -16,16 +16,16 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
       # Watch for the read attribute to force notification dismiss
       scope.watchedCopy = notification
       scope.$watch 'watchedCopy', (value) ->
-        dismissNotification value.id, true, findNewNotification if value.read
+        dismissNotification value.general.id, true, findNewNotification if value.general.read
       , true
 
       unless dismissing
         # Bind the notification with the template model
         scope.notification = angular.copy(notification)
-        scope.title = notification.title
-        scope.className = colorForType notification.type
-        if notification.customClass?
-          scope.className += ' ' + notification.customClass
+        scope.message = notification.content.message
+        scope.className = colorForType notification.display.type
+        if notification.display.customClass isnt ''
+          scope.className += ' ' + notification.display.customClass
         unless scope.$$phase
           scope.$apply()
 
@@ -38,43 +38,43 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
         notificationElement.animate {
           top: 68
         }, 'slow', () ->
-          displayDuration = if notification.duration? then notification.duration else (2000 + notification.title.length * 80)
+          displayDuration = if notification.display.duration? then notification.display.duration else (2000 + notification.content.message.length * 80)
           if displayDuration isnt -1
             $timeout ->
-              dismissNotification notification.id, true, findNewNotification
+              dismissNotification notification.general.id, true, findNewNotification
             , displayDuration
           else        
             bodyClick = () ->
               $('body').unbind 'click', bodyClick
-              dismissNotification notification.id, true, findNewNotification
+              dismissNotification notification.general.id, true, findNewNotification
             $('body').bind 'click', bodyClick
 
 
     dismissNotification = (id, markAsRead, callback) ->
-      if not dismissing and scope.notification? and scope.notification.id is id
+      if not dismissing and scope.notification? and scope.notification.general.id is id
         dismissing = true
         if markAsRead
           Notifications.markAsRead(scope.notification)
-          scope.notification.read = true
+          scope.notification.general.read = true
         delete scope.notification
         $(element[0]).find('.urgent-notification').fadeOut 'slow', callback
 
 
     # Bind the click on the close button
     $(element[0]).find('.close').bind 'click', () ->
-      dismissNotification scope.notification.id, true, findNewNotification
+      dismissNotification scope.notification.general.id, true, findNewNotification
 
 
     # Get the color class for a specific type
     colorForType = (type) ->
-      if type is 'error' or type is 'urgent'
+      if type is 'error'
         return 'orange'
-      else if type is 'pending' or type is 'info'
+      else if type is 'info'
         return 'blue'
       else if type is 'success'
         return 'green'
       else
-        return 'blue'
+        return ''
 
 
     # Look for a new notification to display in the notifications pool
@@ -82,9 +82,9 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
       dismissing = false
       unless scope.notification?
         for notification in scope.allNotifications
-          unless notification.read or (scope.state.paused and not notification.urgent)
-            if notification.display is 'active'
-              if (not scope.notification?) or scope.notification.read
+          unless notification.general.read or (scope.state.paused and not notification.display.urgent)
+            if notification.display.mode is 'active'
+              if (not scope.notification?) or scope.notification.general.read
                 displayNotification notification
                 break
 
@@ -102,9 +102,9 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
       # Check for a real change
       if newValue? and newValue.paused? and (not oldValue? or not oldValue.paused? or newValue.paused isnt oldValue.paused)
         # If we just paused and we are not displaying a urgent notification
-        # or dismissing it we dismiss it
-        if scope.state.paused and scope.notification? and not scope.notification.urgent and not dismissing
-          dismissNotification scope.notification.id, false, findNewNotification
+        # or dismissing it, we dismiss it
+        if scope.state.paused and scope.notification? and not scope.notification.display.urgent and not dismissing
+          dismissNotification scope.notification.general.id, false, findNewNotification
         # Refresh the notification
         else if not dismissing
           findNewNotification()

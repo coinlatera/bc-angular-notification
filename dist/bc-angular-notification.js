@@ -8,7 +8,7 @@
     'Notifications', 'NotificationsUI', '$timeout', '$rootScope', function(Notifications, NotificationsUI, $timeout, $rootScope) {
       return {
         restrict: 'E',
-        template: '<div ng-show="showNotification" class="urgent-notification active" ng-class="className">' + '<span ng-bind-html-unsafe="title"></span>' + '<div class="close"><i class="icon-remove-circle icon-large"></i></div>' + '</div>',
+        template: '<div ng-show="showNotification" class="urgent-notification active" ng-class="className">' + '<span ng-bind-html-unsafe="message"></span>' + '<div class="close"><i class="icon-remove-circle icon-large"></i></div>' + '</div>',
         link: function(scope, element, attrs) {
           var colorForType, dismissNotification, dismissing, displayNotification, findNewNotification;
           scope.showNotification = false;
@@ -17,16 +17,16 @@
             var notificationElement;
             scope.watchedCopy = notification;
             scope.$watch('watchedCopy', function(value) {
-              if (value.read) {
-                return dismissNotification(value.id, true, findNewNotification);
+              if (value.general.read) {
+                return dismissNotification(value.general.id, true, findNewNotification);
               }
             }, true);
             if (!dismissing) {
               scope.notification = angular.copy(notification);
-              scope.title = notification.title;
-              scope.className = colorForType(notification.type);
-              if (notification.customClass != null) {
-                scope.className += ' ' + notification.customClass;
+              scope.message = notification.content.message;
+              scope.className = colorForType(notification.display.type);
+              if (notification.display.customClass !== '') {
+                scope.className += ' ' + notification.display.customClass;
               }
               if (!scope.$$phase) {
                 scope.$apply();
@@ -40,15 +40,15 @@
                 top: 68
               }, 'slow', function() {
                 var bodyClick, displayDuration;
-                displayDuration = notification.duration != null ? notification.duration : 2000 + notification.title.length * 80;
+                displayDuration = notification.display.duration != null ? notification.display.duration : 2000 + notification.content.message.length * 80;
                 if (displayDuration !== -1) {
                   return $timeout(function() {
-                    return dismissNotification(notification.id, true, findNewNotification);
+                    return dismissNotification(notification.general.id, true, findNewNotification);
                   }, displayDuration);
                 } else {
                   bodyClick = function() {
                     $('body').unbind('click', bodyClick);
-                    return dismissNotification(notification.id, true, findNewNotification);
+                    return dismissNotification(notification.general.id, true, findNewNotification);
                   };
                   return $('body').bind('click', bodyClick);
                 }
@@ -56,28 +56,28 @@
             }
           };
           dismissNotification = function(id, markAsRead, callback) {
-            if (!dismissing && (scope.notification != null) && scope.notification.id === id) {
+            if (!dismissing && (scope.notification != null) && scope.notification.general.id === id) {
               dismissing = true;
               if (markAsRead) {
                 Notifications.markAsRead(scope.notification);
-                scope.notification.read = true;
+                scope.notification.general.read = true;
               }
               delete scope.notification;
               return $(element[0]).find('.urgent-notification').fadeOut('slow', callback);
             }
           };
           $(element[0]).find('.close').bind('click', function() {
-            return dismissNotification(scope.notification.id, true, findNewNotification);
+            return dismissNotification(scope.notification.general.id, true, findNewNotification);
           });
           colorForType = function(type) {
-            if (type === 'error' || type === 'urgent') {
+            if (type === 'error') {
               return 'orange';
-            } else if (type === 'pending' || type === 'info') {
+            } else if (type === 'info') {
               return 'blue';
             } else if (type === 'success') {
               return 'green';
             } else {
-              return 'blue';
+              return '';
             }
           };
           findNewNotification = function() {
@@ -88,9 +88,9 @@
               _results = [];
               for (_i = 0, _len = _ref.length; _i < _len; _i++) {
                 notification = _ref[_i];
-                if (!(notification.read || (scope.state.paused && !notification.urgent))) {
-                  if (notification.display === 'active') {
-                    if ((scope.notification == null) || scope.notification.read) {
+                if (!(notification.general.read || (scope.state.paused && !notification.display.urgent))) {
+                  if (notification.display.mode === 'active') {
+                    if ((scope.notification == null) || scope.notification.general.read) {
                       displayNotification(notification);
                       break;
                     } else {
@@ -114,8 +114,8 @@
           scope.state = NotificationsUI.state();
           scope.$watch('state', function(newValue, oldValue) {
             if ((newValue != null) && (newValue.paused != null) && ((oldValue == null) || (oldValue.paused == null) || newValue.paused !== oldValue.paused)) {
-              if (scope.state.paused && (scope.notification != null) && !scope.notification.urgent && !dismissing) {
-                return dismissNotification(scope.notification.id, false, findNewNotification);
+              if (scope.state.paused && (scope.notification != null) && !scope.notification.display.urgent && !dismissing) {
+                return dismissNotification(scope.notification.general.id, false, findNewNotification);
               } else if (!dismissing) {
                 return findNewNotification();
               }
@@ -314,7 +314,8 @@
         buildNotification: function(notification) {
           notification = $.extend(true, this.defaults(), notification);
           notification.content.message = postProcessMessage($filter('translate')(notification.content.message, true), notification.content.params);
-          return notification.content.details = postProcessMessage($filter('translate')(notification.content.details, true), notification.content.params);
+          notification.content.details = postProcessMessage($filter('translate')(notification.content.details, true), notification.content.params);
+          return notification;
         },
         defaults: function() {
           var id;
@@ -335,6 +336,7 @@
             display: {
               mode: 'silent',
               location: '',
+              urgent: false,
               type: 'success',
               dropdown: false,
               duration: null,
