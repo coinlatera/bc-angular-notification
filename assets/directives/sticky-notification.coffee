@@ -6,33 +6,6 @@ angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['N
             '</div>',
   link: (scope, element, attrs) ->
 
-    # # Hide the notification at start
-    # scope.showNotification = false
-
-    # # Initialise and display a notification
-    # displayNotification = (notification) ->
-
-    #   # Animate the notification hide (if there already is a notification)
-    #   $(element[0]).find('.urgent-notification').slideUp 'slow', 'linear', () ->
-
-    #     # Bind the notification with the template model
-    #     scope.notification = notification
-    #     scope.title = notification.title
-    #     scope.className = colorForType notification.type
-    #     if notification.customClass?
-    #       scope.className += ' ' + notification.customClass
-    #     unless scope.$$phase
-    #       scope.$apply()
-
-    #     # Watch for the read attribute to force notification dismiss
-    #     scope.$watch 'notification', (value) ->
-    #       $(element[0]).find('.urgent-notification').slideUp 'slow', 'linear', findNewNotification if value.read
-    #     , true
-
-    #     # Animate the notification apparition
-    #     $(element[0]).find('.urgent-notification').slideDown 'slow', 'linear'
-
-
 
     # Click on the close button
     scope.close = (notif) ->
@@ -73,7 +46,7 @@ angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['N
           # Every time something change, we update the notification
           scope.stickyNotifications = []
           for notif in newValue
-            if not notif.general.read and notif.display.mode is 'sticky'
+            if not notif.general.read and notif.display.mode is 'sticky' and notif.display.location is attrs.id
               scope.stickyNotifications.push notif
           return
     , true

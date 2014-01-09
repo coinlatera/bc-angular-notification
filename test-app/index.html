@@ -58,8 +58,14 @@
         <div class="span12">
           <h1>Notifications test app</h1>
           <p>
-            <a href="" class="btn btn-primary btn-large" ng-click="showRandomNotif('active')">Active notification</a>
-            <a href="" class="btn btn-primary btn-large" ng-click="showRandomNotif('sticky')">Sticky notification</a>
+            <a href="" class="btn btn-danger btn-large" ng-click="showActiveNotif('error')">Active error</a>
+            <a href="" class="btn btn-primary btn-large" ng-click="showActiveNotif('info')">Active info</a>
+            <a href="" class="btn btn-success btn-large" ng-click="showActiveNotif('success')">Active success</a>
+          </p>
+          <p>
+            <a href="" class="btn btn-danger btn-large" ng-click="showStickyNotif('error', 'home')">Sticky error</a>
+            <a href="" class="btn btn-primary btn-large" ng-click="showStickyNotif('info', 'home')">Sticky info</a>
+            <a href="" class="btn btn-success btn-large" ng-click="showStickyNotif('success', 'home')">Sticky success</a>
           </p>
         </div>
       </div>

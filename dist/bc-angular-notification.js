@@ -158,7 +158,7 @@
                 scope.stickyNotifications = [];
                 for (_i = 0, _len = newValue.length; _i < _len; _i++) {
                   notif = newValue[_i];
-                  if (!notif.general.read && notif.display.mode === 'sticky') {
+                  if (!notif.general.read && notif.display.mode === 'sticky' && notif.display.location === attrs.id) {
                     scope.stickyNotifications.push(notif);
                   }
                 }
