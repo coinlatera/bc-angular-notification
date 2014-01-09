@@ -29,29 +29,20 @@ angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['N
 
 
 
-    # # Look for a new notification to display in the notifications pool
-    # findNewNotification = () ->
-    #   for notification in scope.allNotifications
-    #     unless notification.read
-    #       if notification.display is 'sticky' and notification.type is 'urgent'
-    #         if scope.notification? and notification.id is scope.notification.id
-    #           continue
-    #         displayNotification notification
-
-
-
     # Watch for a change in the notification pool
-    scope.stickyNotifications = []
     $rootScope.$watch 'notifications', (newValue, oldValue) ->
       unless newValue is oldValue
-        # Every time something change, we update the notification
-        scope.stickyNotifications = []
-        for notif in newValue
-          if not notif.general.read and notif.display.mode is 'sticky' and notif.display.location is attrs.id
-            scope.stickyNotifications.push notif
-        return
+        updateNotifications(newValue)
     , true
 
-    # findNewNotification()
+    updateNotifications = (pool) ->
+      # Every time something change, we update the notification
+      scope.stickyNotifications = []
+      for notif in pool
+        if not notif.general.read and notif.display.mode is 'sticky' and notif.display.location is attrs.id
+          scope.stickyNotifications.push notif
+      return
+
+    updateNotifications($rootScope.notifications)
 
 ]
