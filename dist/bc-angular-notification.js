@@ -333,6 +333,34 @@
           duration: duration
         };
       };
+      ({
+        defaults: function() {
+          var id;
+          id = Math.floor(Math.random() * 999999);
+          return {
+            general: {
+              id: id,
+              date: new Date().getTime(),
+              read: false
+            },
+            content: {
+              message: '',
+              details: '',
+              params: {
+                id: id
+              }
+            },
+            display: {
+              mode: 'silent',
+              location: '',
+              type: 'success',
+              dropdown: false,
+              duration: null,
+              customClass: ''
+            }
+          };
+        }
+      });
       return this;
     }
   ]);

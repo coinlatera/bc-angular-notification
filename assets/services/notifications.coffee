@@ -1,4 +1,5 @@
 angular.module('bc.notifications', []).service "Notifications", ['$rootScope', ($rootScope) ->
+  
   # We store all the notifications in the root scope
   $rootScope.notifications = []
 
