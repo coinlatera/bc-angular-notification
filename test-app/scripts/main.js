@@ -1,19 +1,6 @@
 'use strict';
 
-angular.module('buttercoinAngularNotificationTestApp', ['bc.angular-notification'])
-                 .config(['$provide', function ($provide) {
-                   $provide.constant('CONFIG', { locale: 'fr_FR' });
-                   $provide.constant('Strings', {
-                      'known_english_translation': {
-                        'en_US': 'We sent you another code via SMS [link url=#/notifications/_$id_]Learn more[/link]',
-                        'fr_FR': 'Nous vous avons envoyé un nouveau code par SMS [link url=#/notifications/_$id_]En savoir plus[/link]'
-                      },
-                     'no_french_translation': {
-                       'en_US': 'I am the English-only version of the target string',
-                     }
-                   });
-                 }])
-                 .controller('MainCtrl', function ($scope, Notifications, NotificationsBuilder, NotificationsUI) {
+app.controller('MainCtrl', function ($scope, Notifications, NotificationsBuilder, NotificationsUI) {
 
   var getNotification = function (title, type, displayMode, duration, urgent) {
     return NotificationsBuilder.buildNotification(type, title, '', displayMode, urgent, false, {}, duration);
