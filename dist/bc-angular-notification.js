@@ -135,6 +135,9 @@
     'Notifications', '$rootScope', '$timeout', function(Notifications, $rootScope, $timeout) {
       return {
         restrict: 'E',
+        scope: {
+          stickyNotifications: "&"
+        },
         template: '<div ng-repeat="notif in stickyNotifications" id="notif-{{notif.general.id}}" class="urgent-notification sticky" ng-class="colorForType(notif.display.type)">' + '<span ng-bind-html-unsafe="notif.content.message"></span>' + '<div class="close" ng-click="close(notif)"><i class="icon-remove-circle icon-large"></i></div>' + '</div>',
         link: function(scope, element, attrs) {
           scope.close = function(notif) {
@@ -153,17 +156,15 @@
           };
           scope.stickyNotifications = [];
           return $rootScope.$watch('notifications', function(newValue, oldValue) {
+            var notif, _i, _len;
             if (newValue !== oldValue) {
-              return $timeout(function() {
-                var notif, _i, _len;
-                scope.stickyNotifications = [];
-                for (_i = 0, _len = newValue.length; _i < _len; _i++) {
-                  notif = newValue[_i];
-                  if (!notif.general.read && notif.display.mode === 'sticky' && notif.display.location === attrs.id) {
-                    scope.stickyNotifications.push(notif);
-                  }
+              scope.stickyNotifications = [];
+              for (_i = 0, _len = newValue.length; _i < _len; _i++) {
+                notif = newValue[_i];
+                if (!notif.general.read && notif.display.mode === 'sticky' && notif.display.location === attrs.id) {
+                  scope.stickyNotifications.push(notif);
                 }
-              });
+              }
             }
           }, true);
         }
