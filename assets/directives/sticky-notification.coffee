@@ -1,5 +1,7 @@
 angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['Notifications', '$rootScope', '$timeout', (Notifications, $rootScope, $timeout) ->
   restrict: 'E',
+  scope:
+    stickyNotifications: "&"
   template: '<div ng-repeat="notif in stickyNotifications" id="notif-{{notif.general.id}}" class="urgent-notification sticky" ng-class="colorForType(notif.display.type)">' +
               '<span ng-bind-html-unsafe="notif.content.message"></span>' +
               '<div class="close" ng-click="close(notif)"><i class="icon-remove-circle icon-large"></i></div>' +
@@ -42,13 +44,12 @@ angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['N
     scope.stickyNotifications = []
     $rootScope.$watch 'notifications', (newValue, oldValue) ->
       unless newValue is oldValue
-        $timeout ->
-          # Every time something change, we update the notification
-          scope.stickyNotifications = []
-          for notif in newValue
-            if not notif.general.read and notif.display.mode is 'sticky' and notif.display.location is attrs.id
-              scope.stickyNotifications.push notif
-          return
+        # Every time something change, we update the notification
+        scope.stickyNotifications = []
+        for notif in newValue
+          if not notif.general.read and notif.display.mode is 'sticky' and notif.display.location is attrs.id
+            scope.stickyNotifications.push notif
+        return
     , true
 
     # findNewNotification()
