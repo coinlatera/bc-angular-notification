@@ -39,7 +39,8 @@ angular.module('bc.notifications-builder', ['bc.angular-i18n']).service 'Notific
       urgent: false              # define if the notification should be shown even if the NotificationsUI has been paused
       type: 'success'            # 'success', 'info' or 'error'
       dropdown: false            # defines if the notification should be displayed in the dropdown and notifications page
-      duration: null             # `null`, `positive integer` or -1
+      duration: null             # how long the notification is displayed (only used for 'active' mode).
+                                 # `null` (based on message length), `positive integer` (number of milliseconds) or -1 (forever)
       customClass: ''            # custom class to apply to the notification when shown
 
   return this
