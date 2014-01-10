@@ -143,6 +143,22 @@
           scope.close = function(notif) {
             return Notifications.markAsRead(notif);
           };
+          $('body').bind('click', function() {
+            var notif, _i, _len, _ref, _results;
+            _ref = scope.stickyNotifications;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              notif = _ref[_i];
+              if (!notif.display.permanent && (new Date().getTime() - notif.displayTime > 100)) {
+                _results.push(scope.$apply(function() {
+                  return Notifications.markAsRead(notif);
+                }));
+              } else {
+                _results.push(void 0);
+              }
+            }
+            return _results;
+          });
           scope.colorForType = function(type) {
             if (type === 'error' || type === 'urgent') {
               return 'orange';
@@ -160,12 +176,14 @@
             }
           }, true);
           updateNotifications = function(pool) {
-            var notif, _i, _len;
+            var copy, notif, _i, _len;
             scope.stickyNotifications = [];
             for (_i = 0, _len = pool.length; _i < _len; _i++) {
               notif = pool[_i];
               if (!notif.general.read && notif.display.mode === 'sticky' && notif.display.location === attrs.id) {
-                scope.stickyNotifications.push(notif);
+                copy = angular.copy(notif);
+                copy.displayTime = new Date().getTime();
+                scope.stickyNotifications.push(copy);
               }
             }
           };
@@ -302,6 +320,7 @@
             display: {
               mode: 'silent',
               location: '',
+              permanent: false,
               urgent: false,
               type: 'success',
               dropdown: false,

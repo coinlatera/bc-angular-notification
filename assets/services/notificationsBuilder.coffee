@@ -35,6 +35,7 @@ angular.module('bc.notifications-builder', ['bc.angular-i18n']).service 'Notific
     display:
       mode: 'silent'             # 'silent', 'active' or 'sticky'
       location: ''               # id of the directive where to display the notification (only used for 'sticky' mode)
+      permanent: false           # if set to true the notification would not be automatically closed on user click
       urgent: false              # define if the notification should be shown even if the NotificationsUI has been paused
       type: 'success'            # 'success', 'info' or 'error'
       dropdown: false            # defines if the notification should be displayed in the dropdown and notifications page
