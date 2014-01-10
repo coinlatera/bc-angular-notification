@@ -1,4 +1,4 @@
-angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['Notifications', (Notifications) ->
+angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['Notifications', '$sce', (Notifications, $sce) ->
   restrict: 'E',
   template: '<div ng-show="showNotification" class="urgent-notification sticky" ng-class="className">' +
               '<span ng-bind-html-unsafe="title"></span>' +
@@ -17,7 +17,7 @@ angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['N
 
         # Bind the notification with the template model
         scope.notification = notification
-        scope.title = notification.title
+        scope.title = $sce.trustAsHtml notification.title
         scope.className = colorForType notification.type
         if notification.customClass?
           scope.className += ' ' + notification.customClass
