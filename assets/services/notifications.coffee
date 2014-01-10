@@ -59,5 +59,6 @@ angular.module('bc.notifications', []).service "Notifications", ['$rootScope', (
   this.show = (notification) ->
     $rootScope.notifications.push notification
     return
- 
+
+  return this
 ]

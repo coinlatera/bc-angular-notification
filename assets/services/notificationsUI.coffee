@@ -16,5 +16,6 @@ angular.module('bc.notifications-ui', []).service "NotificationsUI", ['$rootScop
   # Return the notifications state
   this.state = () ->
     return $rootScope.state
- 
+
+  return this
 ]

@@ -1,6 +1,6 @@
 angular.module('bc.notifications-builder', ['bc.angular-i18n']).service 'NotificationsBuilder', ['$filter', ($filter) ->
 
-  postProcessMessage = (message, params) ->
+  this.postProcessMessage = (message, params) ->
     message = message.replace /\[blue\]([^\[]*)\[\/blue\]/, '<span class="notif-blue">$1</span>'
     message = message.replace /\[green\]([^\[]*)\[\/green\]/, '<span class="notif-green">$1</span>'
     message = message.replace /\[red\]([^\[]*)\[\/red\]/, '<span class="notif-red">$1</span>'
@@ -13,12 +13,12 @@ angular.module('bc.notifications-builder', ['bc.angular-i18n']).service 'Notific
     message = message.replace /\[button url=([^\]]*)\]([^\[]*)\[\/button\]/, '<a class="btn btn-primary notif-button" href="$1">$2</a>'
     return message
 
-  buildNotification : (type, message, detailedMessage, displayMode, urgent, showInDropdown, params = {}, duration = undefined) ->
+  this.buildNotification = (type, message, detailedMessage, displayMode, urgent, showInDropdown, params = {}, duration = undefined) ->
     params["$id"] = Math.floor(Math.random() * 999999)
     return {
       id: params["$id"]
-      title: postProcessMessage($filter('translate')(message, true), params)
-      detailedTitle: postProcessMessage($filter('translate')(detailedMessage, true), params)
+      title: this.postProcessMessage($filter('translate')(message, true), params)
+      detailedTitle: this.postProcessMessage($filter('translate')(detailedMessage, true), params)
       read: false
       type: type
       display: displayMode
@@ -28,5 +28,7 @@ angular.module('bc.notifications-builder', ['bc.angular-i18n']).service 'Notific
       customClass: if params['customClass'] then params['customClass'] else ''
       duration: duration
     }
+
+  return this
 ]
 
