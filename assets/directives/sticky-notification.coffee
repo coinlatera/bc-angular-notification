@@ -15,6 +15,12 @@ angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['N
       Notifications.markAsRead(notif)
 
 
+    $('body').bind 'click', () ->
+      for notif in scope.stickyNotifications
+        if not notif.display.permanent and (new Date().getTime() - notif.displayTime > 100)
+          scope.$apply ->
+            Notifications.markAsRead notif
+
 
     # Get the color class for a specific type
     scope.colorForType = (type) ->
@@ -40,7 +46,9 @@ angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['N
       scope.stickyNotifications = []
       for notif in pool
         if not notif.general.read and notif.display.mode is 'sticky' and notif.display.location is attrs.id
-          scope.stickyNotifications.push notif
+          copy = angular.copy notif
+          copy.displayTime = new Date().getTime()
+          scope.stickyNotifications.push copy
       return
 
     updateNotifications($rootScope.notifications)
