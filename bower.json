@@ -23,7 +23,7 @@
   ],
   "dependencies": {
     "angular": "1.2.8",
-    "bc-angular-i18n": "angular-upgrade"
+    "bc-angular-i18n": "master"
   },
   "devDependencies": {
     "bootstrap": "~3.0.2",
