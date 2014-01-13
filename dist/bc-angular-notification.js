@@ -5,10 +5,10 @@
 
 (function() {
   angular.module('bc.active-notification', []).directive('activeNotification', [
-    'Notifications', 'NotificationsUI', '$timeout', '$rootScope', function(Notifications, NotificationsUI, $timeout, $rootScope) {
+    'Notifications', 'NotificationsUI', '$timeout', '$rootScope', '$sce', function(Notifications, NotificationsUI, $timeout, $rootScope, $sce) {
       return {
         restrict: 'E',
-        template: '<div ng-show="showNotification" class="urgent-notification active" ng-class="className">' + '<span ng-bind-html-unsafe="title"></span>' + '<div class="close"><i class="icon-remove-circle icon-large"></i></div>' + '</div>',
+        template: '<div ng-show="showNotification" class="urgent-notification active" ng-class="className">' + '<span ng-bind-html="title"></span>' + '<div class="close"><i class="icon-remove-circle icon-large"></i></div>' + '</div>',
         link: function(scope, element, attrs) {
           var colorForType, dismissNotification, dismissing, displayNotification, findNewNotification;
           scope.showNotification = false;
@@ -23,7 +23,7 @@
             }, true);
             if (!dismissing) {
               scope.notification = angular.copy(notification);
-              scope.title = notification.title;
+              scope.title = $sce.trustAsHtml(notification.title);
               scope.className = colorForType(notification.type);
               if (notification.customClass != null) {
                 scope.className += ' ' + notification.customClass;
@@ -31,6 +31,7 @@
               if (!scope.$$phase) {
                 scope.$apply();
               }
+              scope.showNotification = true;
               notificationElement = $(element[0]).find('.urgent-notification');
               notificationElement.css({
                 display: 'block',
@@ -135,7 +136,7 @@
 
 (function() {
   angular.module('bc.sticky-notification', []).directive('stickyNotification', [
-    'Notifications', function(Notifications) {
+    'Notifications', '$sce', function(Notifications, $sce) {
       return {
         restrict: 'E',
         template: '<div ng-show="showNotification" class="urgent-notification sticky" ng-class="className">' + '<span ng-bind-html-unsafe="title"></span>' + '<div class="close"><i class="icon-remove-circle icon-large"></i></div>' + '</div>',
@@ -145,7 +146,7 @@
           displayNotification = function(notification) {
             return $(element[0]).find('.urgent-notification').slideUp('slow', 'linear', function() {
               scope.notification = notification;
-              scope.title = notification.title;
+              scope.title = $sce.trustAsHtml(notification.title);
               scope.className = colorForType(notification.type);
               if (notification.customClass != null) {
                 scope.className += ' ' + notification.customClass;
@@ -279,9 +280,10 @@
       this.removeAll = function() {
         return $rootScope.notifications = [];
       };
-      return this.show = function(notification) {
+      this.show = function(notification) {
         $rootScope.notifications.push(notification);
       };
+      return this;
     }
   ]);
 
@@ -290,8 +292,7 @@
 (function() {
   angular.module('bc.notifications-builder', ['bc.angular-i18n']).service('NotificationsBuilder', [
     '$filter', function($filter) {
-      var postProcessMessage;
-      postProcessMessage = function(message, params) {
+      this.postProcessMessage = function(message, params) {
         message = message.replace(/\[blue\]([^\[]*)\[\/blue\]/, '<span class="notif-blue">$1</span>');
         message = message.replace(/\[green\]([^\[]*)\[\/green\]/, '<span class="notif-green">$1</span>');
         message = message.replace(/\[red\]([^\[]*)\[\/red\]/, '<span class="notif-red">$1</span>');
@@ -310,30 +311,29 @@
         message = message.replace(/\[button url=([^\]]*)\]([^\[]*)\[\/button\]/, '<a class="btn btn-primary notif-button" href="$1">$2</a>');
         return message;
       };
-      return {
-        buildNotification: function(type, message, detailedMessage, displayMode, urgent, showInDropdown, params, duration) {
-          if (params == null) {
-            params = {};
-          }
-          if (duration == null) {
-            duration = void 0;
-          }
-          params["$id"] = Math.floor(Math.random() * 999999);
-          return {
-            id: params["$id"],
-            title: postProcessMessage($filter('translate')(message, true), params),
-            detailedTitle: postProcessMessage($filter('translate')(detailedMessage, true), params),
-            read: false,
-            type: type,
-            display: displayMode,
-            urgent: urgent,
-            date: new Date().getTime(),
-            showInDropdown: showInDropdown,
-            customClass: params['customClass'] ? params['customClass'] : '',
-            duration: duration
-          };
+      this.buildNotification = function(type, message, detailedMessage, displayMode, urgent, showInDropdown, params, duration) {
+        if (params == null) {
+          params = {};
         }
+        if (duration == null) {
+          duration = void 0;
+        }
+        params["$id"] = Math.floor(Math.random() * 999999);
+        return {
+          id: params["$id"],
+          title: this.postProcessMessage($filter('translate')(message, true), params),
+          detailedTitle: this.postProcessMessage($filter('translate')(detailedMessage, true), params),
+          read: false,
+          type: type,
+          display: displayMode,
+          urgent: urgent,
+          date: new Date().getTime(),
+          showInDropdown: showInDropdown,
+          customClass: params['customClass'] ? params['customClass'] : '',
+          duration: duration
+        };
       };
+      return this;
     }
   ]);
 
@@ -351,9 +351,10 @@
       this.resume = function() {
         return $rootScope.state.paused = false;
       };
-      return this.state = function() {
+      this.state = function() {
         return $rootScope.state;
       };
+      return this;
     }
   ]);
 

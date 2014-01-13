@@ -1,7 +1,7 @@
-angular.module('bc.active-notification', []).directive 'activeNotification', ['Notifications', 'NotificationsUI', '$timeout', '$rootScope', (Notifications, NotificationsUI, $timeout, $rootScope) ->
+angular.module('bc.active-notification', []).directive 'activeNotification', ['Notifications', 'NotificationsUI', '$timeout', '$rootScope', '$sce', (Notifications, NotificationsUI, $timeout, $rootScope, $sce) ->
   restrict: 'E',
   template: '<div ng-show="showNotification" class="urgent-notification active" ng-class="className">' +
-              '<span ng-bind-html-unsafe="title"></span>' +
+              '<span ng-bind-html="title"></span>' +
               '<div class="close"><i class="icon-remove-circle icon-large"></i></div>' +
             '</div>',
   link: (scope, element, attrs) ->
@@ -22,7 +22,7 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
       unless dismissing
         # Bind the notification with the template model
         scope.notification = angular.copy(notification)
-        scope.title = notification.title
+        scope.title = $sce.trustAsHtml notification.title
         scope.className = colorForType notification.type
         if notification.customClass?
           scope.className += ' ' + notification.customClass
@@ -30,6 +30,7 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
           scope.$apply()
 
         # Animate the notification apparition
+        scope.showNotification = true
         notificationElement = $(element[0]).find('.urgent-notification')
         notificationElement.css {
           display: 'block',

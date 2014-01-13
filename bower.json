@@ -1,6 +1,6 @@
 {
   "name": "bc-angular-notification",
-  "version": "0.0.13",
+  "version": "0.0.15",
   "homepage": "https://github.com/buttercoin/bc-angular-notification",
   "authors": [
     "Matthis <matthis.perrin@gmail.com>"
@@ -22,8 +22,8 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "~1.0.8",
-    "bc-angular-i18n": "https://github.com/buttercoin/bc-angular-i18n.git#master"
+    "angular": "1.2.8",
+    "bc-angular-i18n": "angular-upgrade"
   },
   "devDependencies": {
     "bootstrap": "~3.0.2",
