@@ -1,9 +1,9 @@
-angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['Notifications', '$rootScope', '$timeout', (Notifications, $rootScope, $timeout) ->
+angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['Notifications', '$rootScope', '$sce', (Notifications, $rootScope, $sce) ->
   restrict: 'E',
   scope:
-    stickyNotifications: "&"
+    stickyNotifications: '&'
   template: '<div ng-repeat="notif in stickyNotifications" id="notif-{{notif.general.id}}" class="urgent-notification sticky" ng-class="colorForType(notif.display.type)">' +
-              '<span ng-bind-html-unsafe="notif.content.message"></span>' +
+              '<span ng-bind-html="getTrustedHtml(notif.content.message)"></span>' +
               '<div class="close" ng-click="close(notif)"><i class="icon-remove-circle icon-large"></i></div>' +
             '</div>',
   link: (scope, element, attrs) ->
@@ -13,6 +13,7 @@ angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['N
     scope.close = (notif) ->
       # Mark the notification as read
       Notifications.markAsRead(notif)
+      return
 
 
     $('body').bind 'click', () ->
@@ -20,6 +21,8 @@ angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['N
         if not notif.display.permanent and (new Date().getTime() - notif.displayTime > 100)
           scope.$apply ->
             Notifications.markAsRead notif
+            return
+      return
 
 
     # Get the color class for a specific type
@@ -34,11 +37,16 @@ angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['N
         return 'blue'
 
 
+    # Return the value as trusted HTML
+    scope.getTrustedHtml = (value) ->
+      return $sce.trustAsHtml value
+
 
     # Watch for a change in the notification pool
     $rootScope.$watch 'notifications', (newValue, oldValue) ->
       unless newValue is oldValue
         updateNotifications(newValue)
+      return
     , true
 
     updateNotifications = (pool) ->

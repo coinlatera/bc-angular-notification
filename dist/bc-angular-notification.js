@@ -132,33 +132,29 @@
 
 (function() {
   angular.module('bc.sticky-notification', []).directive('stickyNotification', [
-    'Notifications', '$rootScope', '$timeout', function(Notifications, $rootScope, $timeout) {
+    'Notifications', '$rootScope', '$sce', function(Notifications, $rootScope, $sce) {
       return {
         restrict: 'E',
         scope: {
-          stickyNotifications: "&"
+          stickyNotifications: '&'
         },
-        template: '<div ng-repeat="notif in stickyNotifications" id="notif-{{notif.general.id}}" class="urgent-notification sticky" ng-class="colorForType(notif.display.type)">' + '<span ng-bind-html-unsafe="notif.content.message"></span>' + '<div class="close" ng-click="close(notif)"><i class="icon-remove-circle icon-large"></i></div>' + '</div>',
+        template: '<div ng-repeat="notif in stickyNotifications" id="notif-{{notif.general.id}}" class="urgent-notification sticky" ng-class="colorForType(notif.display.type)">' + '<span ng-bind-html="getTrustedHtml(notif.content.message)"></span>' + '<div class="close" ng-click="close(notif)"><i class="icon-remove-circle icon-large"></i></div>' + '</div>',
         link: function(scope, element, attrs) {
           var updateNotifications;
           scope.close = function(notif) {
-            return Notifications.markAsRead(notif);
+            Notifications.markAsRead(notif);
           };
           $('body').bind('click', function() {
-            var notif, _i, _len, _ref, _results;
+            var notif, _i, _len, _ref;
             _ref = scope.stickyNotifications;
-            _results = [];
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               notif = _ref[_i];
               if (!notif.display.permanent && (new Date().getTime() - notif.displayTime > 100)) {
-                _results.push(scope.$apply(function() {
-                  return Notifications.markAsRead(notif);
-                }));
-              } else {
-                _results.push(void 0);
+                scope.$apply(function() {
+                  Notifications.markAsRead(notif);
+                });
               }
             }
-            return _results;
           });
           scope.colorForType = function(type) {
             if (type === 'error' || type === 'urgent') {
@@ -171,9 +167,12 @@
               return 'blue';
             }
           };
+          scope.getTrustedHtml = function(value) {
+            return $sce.trustAsHtml(value);
+          };
           $rootScope.$watch('notifications', function(newValue, oldValue) {
             if (newValue !== oldValue) {
-              return updateNotifications(newValue);
+              updateNotifications(newValue);
             }
           }, true);
           updateNotifications = function(pool) {
