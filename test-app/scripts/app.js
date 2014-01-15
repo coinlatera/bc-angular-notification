@@ -1,6 +1,6 @@
 'use strict'
 
-var app = angular.module('buttercoinAngularNotificationTestApp', ['bc.angular-notification', 'ngRoute']);
+var app = angular.module('buttercoinAngularNotificationTestApp', ['bc.angular-notification', 'ngAnimate', 'ngRoute']);
 
 app.config(['$provide', function ($provide) {
   $provide.constant('CONFIG', { locale: 'fr_FR' });

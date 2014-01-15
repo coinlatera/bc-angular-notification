@@ -7,7 +7,8 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="stylesheet" type="text/css" href="../bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../bower_components/bootstrap/docs/assets/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../bower_components/bootstrap/docs/assets/css/bootstrap-responsive.css">
     <link rel="stylesheet" type="text/css" href="../bower_components/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <style type="text/css">
@@ -17,6 +18,12 @@
         padding-top: 60px;
         padding-bottom: 40px;
       }
+      @media (max-width: 980px) {
+        body {
+          padding-top: 0px;
+          padding-bottom: 0px;
+        }
+      }
     </style>
 
   </head>
@@ -25,36 +32,29 @@
     
     <active-notification></active-notification>
 
-    <div class="navbar-wrapper">
-      <div class="container">
-
-        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="z-index:0">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-              <a class="navbar-brand" href="#">Buttercoin-Angular-Notification</a>
-            </div>
-            <div class="navbar-collapse collapse">
-              <ul class="nav navbar-nav">
-                <li><a href="#/">Home</a></li>
-                <li><a href="#/page1">Page1</a></li>
-                <li><a href="#/page2">Page2</a></li>
-              </ul>
-            </div>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="#">Buttercoin-Angular-Notification</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li><a href="#/">Home</a></li>
+              <li><a href="#/page1">Page1</a></li>
+              <li><a href="#/page2">Page2</a></li>
+            </ul>
           </div>
         </div>
-
       </div>
     </div>
 
-    <div class="container">
+    <div class="container-fluid">
 
-      <div class="row" ng-controller="MainCtrl">
+      <div class="row-fluid" ng-controller="MainCtrl">
         <div class="span12">
           <h1>Notifications test app</h1>
           <p>
@@ -70,21 +70,23 @@
         </div>
       </div>
 
-      <div class="row">
+      <div class="row-fluid">
         <div class="span12" ng-view></div>
       </div>
 
-      <hr>
-
-      <footer>
-        <p>&copy; Buttercoin, forker of repos since 2013</p>
-      </footer>
-
     </div>
+
+    <hr>
+
+    <footer>
+      <p>&copy; Buttercoin, forker of repos since 2013</p>
+    </footer>
+
     <script src="../bower_components/jquery/jquery.min.js"></script>
-    <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../bower_components/bootstrap/docs/assets/js/bootstrap.min.js"></script>
     <script src="../bower_components/angular/angular.min.js"></script>
     <script src="../bower_components/angular-route/angular-route.min.js"></script>
+    <script src="../bower_components/angular-animate/angular-animate.min.js"></script>
     <script src="../bower_components/bc-angular-i18n/dist/bc-angular-i18n.js"></script>
     <script src="../dist/bc-angular-notification.js"></script>
     <script src="scripts/app.js"></script>
