@@ -15,13 +15,12 @@ angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['N
       Notifications.markAsRead(notif)
       return
 
-
     $('body').bind 'click', () ->
-      for notif in scope.stickyNotifications
-        if not notif.display.permanent and (new Date().getTime() - notif.displayTime > 100)
-          scope.$apply ->
-            Notifications.markAsRead notif
-            return
+      for notif, i in scope.stickyNotifications
+        displayTime = scope.displayTimes[i]
+        if not notif.display.permanent and (new Date().getTime() - displayTime > 100)
+          Notifications.markAsRead notif
+      scope.$apply()
       return
 
 
@@ -52,11 +51,11 @@ angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['N
     updateNotifications = (pool) ->
       # Every time something change, we update the notification
       scope.stickyNotifications = []
+      scope.displayTimes = []
       for notif in pool
         if not notif.general.read and notif.display.mode is 'sticky' and notif.display.location is attrs.id
-          copy = angular.copy notif
-          copy.displayTime = new Date().getTime()
-          scope.stickyNotifications.push copy
+          scope.displayTimes.push new Date().getTime()
+          scope.stickyNotifications.push notif
       return
 
     updateNotifications($rootScope.notifications)
