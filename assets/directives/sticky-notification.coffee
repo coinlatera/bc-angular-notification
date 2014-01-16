@@ -2,7 +2,7 @@ angular.module('bc.sticky-notification', ['ngAnimate']).directive 'stickyNotific
   restrict: 'E',
   scope:
     stickyNotifications: '&'
-  template: '<div class="notifications">' +
+  template: '<div class="sticky-notifications">' +
               '<div ng-repeat="notif in stickyNotifications" id="notif-{{notif.general.id}}" class="urgent-notification sticky anim-fade anim-slide" ng-class="colorForType(notif.display.type)">' +
                 '<span ng-bind-html="getTrustedHtml(notif.content.message)"></span>' +
                 '<div class="close" ng-click="close(notif)"><i class="icon-remove-circle icon-large"></i></div>' +

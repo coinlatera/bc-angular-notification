@@ -34,10 +34,10 @@
   padding-bottom: 25px;
 }
 
-.notifications .sticky {
+.sticky-notifications .sticky {
   margin-bottom: 10px;
 }
-.notifications .sticky:last-of-type {
+.sticky-notifications .sticky:last-of-type {
   margin-bottom: 0px;
 }
 
