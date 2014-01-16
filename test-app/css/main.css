@@ -1,3 +1,50 @@
+/* MANUALY ADDED */
+
+.anim-fade.ng-enter,
+.anim-fade.ng-leave {
+  -webkit-transition: 0.5s linear all;
+  transition: 0.5s linear all;
+}
+
+.anim-fade.ng-enter,
+.anim-fade.ng-leave.ng-leave-active {
+  opacity: 0;
+}
+.anim-fade.ng-leave,
+.anim-fade.ng-enter.ng-enter-active {
+  opacity: 1;
+}
+
+.anim-slide.ng-enter,
+.anim-slide.ng-leave {
+  -webkit-transition: 0.5s linear all;
+  transition: 0.5s linear all;
+}
+
+.anim-slide.ng-enter,
+.anim-slide.ng-leave.ng-leave-active {
+  height: 0px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+.anim-slide.ng-leave,
+.anim-slide.ng-enter.ng-enter-active {
+  height: auto;
+  padding-top: 25px;
+  padding-bottom: 25px;
+}
+
+.sticky-notifications .sticky {
+  margin-bottom: 10px;
+}
+.sticky-notifications .sticky:last-of-type {
+  margin-bottom: 0px;
+}
+
+/****************************************/
+
+
+
 .transition {
   -webkit-transition: all 0.3s ease;
   -moz-transition: all 0.3s ease;

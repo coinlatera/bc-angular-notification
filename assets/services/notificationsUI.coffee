@@ -8,10 +8,12 @@ angular.module('bc.notifications-ui', []).service "NotificationsUI", ['$rootScop
   # Pause the notification display
   this.pause = ->
     $rootScope.state.paused = true
+    return
 
   # Resume the notification display
   this.resume = ->
     $rootScope.state.paused = false
+    return
 
   # Return the notifications state
   this.state = () ->

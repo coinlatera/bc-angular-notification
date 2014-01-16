@@ -1,6 +1,6 @@
 angular.module('bc.notifications-builder', ['bc.angular-i18n']).service 'NotificationsBuilder', ['$filter', ($filter) ->
 
-  this.postProcessMessage = (message, params) ->
+  postProcessMessage = (message, params) ->
     message = message.replace /\[blue\]([^\[]*)\[\/blue\]/, '<span class="notif-blue">$1</span>'
     message = message.replace /\[green\]([^\[]*)\[\/green\]/, '<span class="notif-green">$1</span>'
     message = message.replace /\[red\]([^\[]*)\[\/red\]/, '<span class="notif-red">$1</span>'
@@ -13,22 +13,38 @@ angular.module('bc.notifications-builder', ['bc.angular-i18n']).service 'Notific
     message = message.replace /\[button url=([^\]]*)\]([^\[]*)\[\/button\]/, '<a class="btn btn-primary notif-button" href="$1">$2</a>'
     return message
 
-  this.buildNotification = (type, message, detailedMessage, displayMode, urgent, showInDropdown, params = {}, duration = undefined) ->
-    params["$id"] = Math.floor(Math.random() * 999999)
-    return {
-      id: params["$id"]
-      title: this.postProcessMessage($filter('translate')(message, true), params)
-      detailedTitle: this.postProcessMessage($filter('translate')(detailedMessage, true), params)
-      read: false
-      type: type
-      display: displayMode
-      urgent: urgent
-      date: new Date().getTime()
-      showInDropdown: showInDropdown
-      customClass: if params['customClass'] then params['customClass'] else ''
-      duration: duration
-    }
+
+  this.buildNotification = (notification) ->
+    notification = $.extend true, this.defaults(), notification
+    notification.content.message = postProcessMessage($filter('translate')(notification.content.message, true), notification.content.params)
+    notification.content.details = postProcessMessage($filter('translate')(notification.content.details, true), notification.content.params)
+    return notification
+
+
+  this.defaults = () ->
+    id = Math.floor Math.random() * 999999
+    general:
+      id: id                     # id of the notification
+      date: new Date().getTime() # date of the notification
+      read: false                # defines if the notification has been read
+      displayTime: 0             # unix time when the notification has been displayed
+    content:
+      message: ''                # message to display when the notification is shown
+      details: ''                # additional detail to the message to display in the notifications page
+      params:                    # parameters to customize the notification message
+        id: id
+    display:
+      mode: 'silent'             # 'silent', 'active' or 'sticky'
+      location: ''               # id of the directive where to display the notification (only used for 'sticky' mode)
+      permanent: false           # if set to true the notification would not be automatically closed on user click
+      urgent: false              # define if the notification should be shown even if the NotificationsUI has been paused
+      type: 'success'            # 'success', 'info' or 'error'
+      dropdown: false            # defines if the notification should be displayed in the dropdown and notifications page
+      duration: null             # how long the notification is displayed (only used for 'active' mode).
+                                 # `null` (based on message length), `positive integer` (number of milliseconds) or -1 (forever)
+      customClass: ''            # custom class to apply to the notification when shown
 
   return this
+  
 ]
 

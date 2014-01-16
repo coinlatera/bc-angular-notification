@@ -1,51 +1,34 @@
-angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['Notifications', '$sce', (Notifications, $sce) ->
+angular.module('bc.sticky-notification', ['ngAnimate']).directive 'stickyNotification', ['Notifications', '$rootScope', '$sce', (Notifications, $rootScope, $sce) ->
   restrict: 'E',
-  template: '<div ng-show="showNotification" class="urgent-notification sticky" ng-class="className">' +
-              '<span ng-bind-html-unsafe="title"></span>' +
-              '<div class="close"><i class="icon-remove-circle icon-large"></i></div>' +
+  scope:
+    stickyNotifications: '&'
+  template: '<div class="sticky-notifications">' +
+              '<div ng-repeat="notif in stickyNotifications" id="notif-{{notif.general.id}}" class="urgent-notification sticky anim-fade anim-slide" ng-class="colorForType(notif.display.type)">' +
+                '<span ng-bind-html="getTrustedHtml(notif.content.message)"></span>' +
+                '<div class="close" ng-click="close(notif)"><i class="icon-remove-circle icon-large"></i></div>' +
+              '</div>' +
             '</div>',
   link: (scope, element, attrs) ->
 
-    # Hide the notification at start
-    scope.showNotification = false
 
-    # Initialise and display a notification
-    displayNotification = (notification) ->
-
-      # Animate the notification hide (if there already is a notification)
-      $(element[0]).find('.urgent-notification').slideUp 'slow', 'linear', () ->
-
-        # Bind the notification with the template model
-        scope.notification = notification
-        scope.title = $sce.trustAsHtml notification.title
-        scope.className = colorForType notification.type
-        if notification.customClass?
-          scope.className += ' ' + notification.customClass
-        unless scope.$$phase
-          scope.$apply()
-
-        # Watch for the read attribute to force notification dismiss
-        scope.$watch 'notification', (value) ->
-          $(element[0]).find('.urgent-notification').slideUp 'slow', 'linear', findNewNotification if value.read
-        , true
-
-        # Animate the notification apparition
-        $(element[0]).find('.urgent-notification').slideDown 'slow', 'linear'
-
-
-
-    # Bind the click on the close button
-    $(element[0]).find('.close').bind 'click', () ->
+    # Click on the close button
+    scope.close = (notif) ->
       # Mark the notification as read
-      Notifications.markAsRead(scope.notification)
+      Notifications.markAsRead(notif)
+      updateNotifications()
+      return
 
-      # Animate the notification disparition
-      $(element[0]).find('.urgent-notification').slideUp 'slow', 'linear', findNewNotification
-
+    $('body').bind 'click', () ->
+      for notif, i in scope.stickyNotifications
+        if not notif.display.permanent and (new Date().getTime() - notif.general.displayTime > 100)
+          Notifications.markAsRead notif
+      updateNotifications()
+      scope.$apply()
+      return true
 
 
     # Get the color class for a specific type
-    colorForType = (type) ->
+    scope.colorForType = (type) ->
       if type is 'error' or type is 'urgent'
         return 'orange'
       else if type is 'pending' or type is 'info'
@@ -56,28 +39,26 @@ angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['N
         return 'blue'
 
 
-
-    # Look for a new notification to display in the notifications pool
-    findNewNotification = () ->
-      for notification in scope.allNotifications
-        unless notification.read
-          if notification.display is 'sticky' and notification.type is 'urgent'
-            if scope.notification? and notification.id is scope.notification.id
-              continue
-            displayNotification notification
-
+    # Return the value as trusted HTML
+    scope.getTrustedHtml = (value) ->
+      return $sce.trustAsHtml value
 
 
     # Watch for a change in the notification pool
-    scope.$watch 'allNotifications', (newValue, oldValue) ->
-      unless newValue is oldValue
-        # Every time something change, we update the notification
-        findNewNotification()
-    , true
+    $rootScope.$watch 'notifications.length', () ->
+      updateNotifications()
+      return
 
+    updateNotifications = () ->
+      # Every time something change, we update the notification
+      scope.stickyNotifications = []
+      for notif in $rootScope.notifications
+        if not notif.general.read and notif.display.mode is 'sticky' and notif.display.location is attrs.id
+          if notif.general.displayTime is 0
+            notif.general.displayTime = new Date().getTime()
+          scope.stickyNotifications.push notif
+      return
 
-    # We get all the notifications
-    scope.allNotifications = Notifications.all()
-    findNewNotification()
+    updateNotifications($rootScope.notifications)
 
 ]
