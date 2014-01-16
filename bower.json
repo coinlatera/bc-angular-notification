@@ -23,6 +23,7 @@
   ],
   "dependencies": {
     "angular": "1.2.8",
+    "angular-animate": "1.2.8",
     "bc-angular-i18n": "master"
   },
   "devDependencies": {

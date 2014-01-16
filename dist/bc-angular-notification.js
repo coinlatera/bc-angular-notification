@@ -131,30 +131,32 @@
 }).call(this);
 
 (function() {
-  angular.module('bc.sticky-notification', []).directive('stickyNotification', [
+  angular.module('bc.sticky-notification', ['ngAnimate']).directive('stickyNotification', [
     'Notifications', '$rootScope', '$sce', function(Notifications, $rootScope, $sce) {
       return {
         restrict: 'E',
         scope: {
           stickyNotifications: '&'
         },
-        template: '<div ng-repeat="notif in stickyNotifications" id="notif-{{notif.general.id}}" class="urgent-notification sticky" ng-class="colorForType(notif.display.type)">' + '<span ng-bind-html="getTrustedHtml(notif.content.message)"></span>' + '<div class="close" ng-click="close(notif)"><i class="icon-remove-circle icon-large"></i></div>' + '</div>',
+        template: '<div ng-repeat="notif in stickyNotifications" id="notif-{{notif.general.id}}" class="urgent-notification sticky anim-fade" ng-class="colorForType(notif.display.type)">' + '<span ng-bind-html="getTrustedHtml(notif.content.message)"></span>' + '<div class="close" ng-click="close(notif)"><i class="icon-remove-circle icon-large"></i></div>' + '</div>',
         link: function(scope, element, attrs) {
           var updateNotifications;
           scope.close = function(notif) {
             Notifications.markAsRead(notif);
+            updateNotifications();
           };
           $('body').bind('click', function() {
-            var notif, _i, _len, _ref;
+            var i, notif, _i, _len, _ref;
             _ref = scope.stickyNotifications;
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              notif = _ref[_i];
-              if (!notif.display.permanent && (new Date().getTime() - notif.displayTime > 100)) {
-                scope.$apply(function() {
-                  Notifications.markAsRead(notif);
-                });
+            for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+              notif = _ref[i];
+              if (!notif.display.permanent && (new Date().getTime() - notif.general.displayTime > 100)) {
+                Notifications.markAsRead(notif);
               }
             }
+            updateNotifications();
+            scope.$apply();
+            return true;
           });
           scope.colorForType = function(type) {
             if (type === 'error' || type === 'urgent') {
@@ -170,20 +172,20 @@
           scope.getTrustedHtml = function(value) {
             return $sce.trustAsHtml(value);
           };
-          $rootScope.$watch('notifications', function(newValue, oldValue) {
-            if (newValue !== oldValue) {
-              updateNotifications(newValue);
-            }
-          }, true);
-          updateNotifications = function(pool) {
-            var copy, notif, _i, _len;
+          $rootScope.$watch('notifications.length', function() {
+            updateNotifications();
+          });
+          updateNotifications = function() {
+            var notif, _i, _len, _ref;
             scope.stickyNotifications = [];
-            for (_i = 0, _len = pool.length; _i < _len; _i++) {
-              notif = pool[_i];
+            _ref = $rootScope.notifications;
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              notif = _ref[_i];
               if (!notif.general.read && notif.display.mode === 'sticky' && notif.display.location === attrs.id) {
-                copy = angular.copy(notif);
-                copy.displayTime = new Date().getTime();
-                scope.stickyNotifications.push(copy);
+                if (notif.general.displayTime === 0) {
+                  notif.general.displayTime = new Date().getTime();
+                }
+                scope.stickyNotifications.push(notif);
               }
             }
           };
@@ -308,7 +310,8 @@
           general: {
             id: id,
             date: new Date().getTime(),
-            read: false
+            read: false,
+            displayTime: 0
           },
           content: {
             message: '',
