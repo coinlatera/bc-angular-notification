@@ -138,7 +138,7 @@
         scope: {
           stickyNotifications: '&'
         },
-        template: '<div ng-repeat="notif in stickyNotifications" id="notif-{{notif.general.id}}" class="urgent-notification sticky anim-fade" ng-class="colorForType(notif.display.type)">' + '<span ng-bind-html="getTrustedHtml(notif.content.message)"></span>' + '<div class="close" ng-click="close(notif)"><i class="icon-remove-circle icon-large"></i></div>' + '</div>',
+        template: '<div class="notifications">' + '<div ng-repeat="notif in stickyNotifications" id="notif-{{notif.general.id}}" class="urgent-notification sticky anim-fade anim-slide" ng-class="colorForType(notif.display.type)">' + '<span ng-bind-html="getTrustedHtml(notif.content.message)"></span>' + '<div class="close" ng-click="close(notif)"><i class="icon-remove-circle icon-large"></i></div>' + '</div>' + '</div>',
         link: function(scope, element, attrs) {
           var updateNotifications;
           scope.close = function(notif) {
