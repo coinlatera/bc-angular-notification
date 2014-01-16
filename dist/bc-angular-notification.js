@@ -237,33 +237,27 @@
         }
       };
       this.markAsRead = function(notification) {
-        var notif, _i, _len, _ref, _results;
+        var notif, _i, _len, _ref;
         _ref = $rootScope.notifications;
-        _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           notif = _ref[_i];
           if (notif.general.id === notification.general.id) {
-            _results.push(notif.general.read = true);
-          } else {
-            _results.push(void 0);
+            notif.general.read = true;
           }
         }
-        return _results;
       };
       this.remove = function(notifId) {
-        var i, _results;
+        var i;
         i = 0;
-        _results = [];
         while (i < $rootScope.notifications.length) {
           if ($rootScope.notifications[i].general.id === notification.general.id) {
             $rootScope.notifications.splice(i, 1);
           }
-          _results.push(i++);
+          i++;
         }
-        return _results;
       };
       this.removeAll = function() {
-        return $rootScope.notifications = [];
+        $rootScope.notifications = [];
       };
       this.show = function(notification) {
         $rootScope.notifications.push(notification);
@@ -345,10 +339,10 @@
         paused: false
       };
       this.pause = function() {
-        return $rootScope.state.paused = true;
+        $rootScope.state.paused = true;
       };
       this.resume = function() {
-        return $rootScope.state.paused = false;
+        $rootScope.state.paused = false;
       };
       this.state = function() {
         return $rootScope.state;
