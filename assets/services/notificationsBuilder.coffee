@@ -27,6 +27,7 @@ angular.module('bc.notifications-builder', ['bc.angular-i18n']).service 'Notific
       id: id                     # id of the notification
       date: new Date().getTime() # date of the notification
       read: false                # defines if the notification has been read
+      displayTime: 0             # unix time when the notification has been displayed
     content:
       message: ''                # message to display when the notification is shown
       details: ''                # additional detail to the message to display in the notifications page

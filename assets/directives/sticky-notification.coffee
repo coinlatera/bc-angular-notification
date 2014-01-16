@@ -13,15 +13,16 @@ angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['N
     scope.close = (notif) ->
       # Mark the notification as read
       Notifications.markAsRead(notif)
+      updateNotifications()
       return
 
     $('body').bind 'click', () ->
       for notif, i in scope.stickyNotifications
-        displayTime = scope.displayTimes[i]
-        if not notif.display.permanent and (new Date().getTime() - displayTime > 100)
+        if not notif.display.permanent and (new Date().getTime() - notif.general.displayTime > 100)
           Notifications.markAsRead notif
+      updateNotifications()
       scope.$apply()
-      return
+      return true
 
 
     # Get the color class for a specific type
@@ -42,19 +43,17 @@ angular.module('bc.sticky-notification', []).directive 'stickyNotification', ['N
 
 
     # Watch for a change in the notification pool
-    $rootScope.$watch 'notifications', (newValue, oldValue) ->
-      unless newValue is oldValue
-        updateNotifications(newValue)
+    $rootScope.$watch 'notifications.length', () ->
+      updateNotifications()
       return
-    , true
 
-    updateNotifications = (pool) ->
+    updateNotifications = () ->
       # Every time something change, we update the notification
       scope.stickyNotifications = []
-      scope.displayTimes = []
-      for notif in pool
+      for notif in $rootScope.notifications
         if not notif.general.read and notif.display.mode is 'sticky' and notif.display.location is attrs.id
-          scope.displayTimes.push new Date().getTime()
+          if notif.general.displayTime is 0
+            notif.general.displayTime = new Date().getTime()
           scope.stickyNotifications.push notif
       return
 
