@@ -29,6 +29,8 @@
   "devDependencies": {
     "bootstrap": "2.3.2",
     "font-awesome": "~3.2.1",
-    "angular-route": "1.2.8"
+    "angular-route": "1.2.8",
+    "angular-mocks": "1.2.8",
+    "angular-scenario": "1.2.8"
   }
 }
