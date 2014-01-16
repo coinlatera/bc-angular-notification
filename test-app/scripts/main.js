@@ -2,6 +2,8 @@
 
 app.controller('MainCtrl', function ($scope, Notifications, NotificationsBuilder, NotificationsUI) {
 
+  $scope.permanent = false
+
   $scope.showActiveNotif = function (type) {
     Notifications.show(NotificationsBuilder.buildNotification({
       content: {
@@ -22,7 +24,8 @@ app.controller('MainCtrl', function ($scope, Notifications, NotificationsBuilder
       display: {
         type: type,
         mode: 'sticky',
-        location: location
+        location: location,
+        permanent: $scope.permanent
       }
     }));
   }
