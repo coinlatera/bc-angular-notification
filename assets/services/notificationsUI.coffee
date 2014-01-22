@@ -1,4 +1,4 @@
-angular.module('bc.notifications-ui', []).service "NotificationsUI", ['$rootScope', ($rootScope) ->
+angular.module('bc.notifications-ui', []).service 'NotificationsUI', ['$rootScope', ($rootScope) ->
   
   # Define if the notification need to be displayed
   $rootScope.state = 

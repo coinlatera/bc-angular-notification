@@ -11,10 +11,12 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      'bower_components/jquery/jquery.js',
       'bower_components/angular/angular.js',
       'bower_components/angular-mocks/angular-mocks.js',
+      'bower_components/bc-angular-i18n/dist/bc-angular-i18n.js',
       '.tmp/**/*.js',
-      'test/unit/**/*.js'
+      'test/unit/**/*.coffee'
     ],
 
     // list of files / patterns to exclude

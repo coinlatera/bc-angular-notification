@@ -200,7 +200,7 @@
 }).call(this);
 
 (function() {
-  angular.module('bc.notifications', []).service("Notifications", [
+  angular.module('bc.notifications', []).service('Notifications', [
     '$rootScope', function($rootScope) {
       $rootScope.notifications = [];
       this.all = function() {
@@ -235,7 +235,7 @@
         _ref = $rootScope.notifications;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           notification = _ref[_i];
-          notification.read = true;
+          notification.general.read = true;
         }
       };
       this.markAsRead = function(notification) {
@@ -248,14 +248,14 @@
           }
         }
       };
-      this.remove = function(notifId) {
-        var i;
-        i = 0;
-        while (i < $rootScope.notifications.length) {
-          if ($rootScope.notifications[i].general.id === notification.general.id) {
+      this.remove = function(notification) {
+        var i, notif, _i, _len, _ref;
+        _ref = $rootScope.notifications;
+        for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+          notif = _ref[i];
+          if (notif.general.id === notification.general.id) {
             $rootScope.notifications.splice(i, 1);
           }
-          i++;
         }
       };
       this.removeAll = function() {
@@ -335,7 +335,7 @@
 }).call(this);
 
 (function() {
-  angular.module('bc.notifications-ui', []).service("NotificationsUI", [
+  angular.module('bc.notifications-ui', []).service('NotificationsUI', [
     '$rootScope', function($rootScope) {
       $rootScope.state = {
         paused: false

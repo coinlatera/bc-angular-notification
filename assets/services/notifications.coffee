@@ -1,4 +1,4 @@
-angular.module('bc.notifications', []).service "Notifications", ['$rootScope', ($rootScope) ->
+angular.module('bc.notifications', []).service 'Notifications', ['$rootScope', ($rootScope) ->
   
   # We store all the notifications in the root scope
   $rootScope.notifications = []
@@ -31,7 +31,7 @@ angular.module('bc.notifications', []).service "Notifications", ['$rootScope', (
   # Set the flag `read` to true for every notification
   this.markAllAsRead = () ->
     for notification in $rootScope.notifications
-      notification.read = true
+      notification.general.read = true
     return
 
 
@@ -44,12 +44,9 @@ angular.module('bc.notifications', []).service "Notifications", ['$rootScope', (
 
 
   # Remove a notification from the notification array
-  this.remove = (notifId) ->
-    i = 0
-    while (i < $rootScope.notifications.length)
-      if $rootScope.notifications[i].general.id is notification.general.id
-        $rootScope.notifications.splice(i, 1)
-      i++
+  this.remove = (notification) ->
+    for notif, i in $rootScope.notifications
+      $rootScope.notifications.splice i, 1 if notif.general.id is notification.general.id
     return
 
 
