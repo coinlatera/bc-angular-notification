@@ -1,4 +1,4 @@
-angular.module('bc.active-notification', []).directive 'activeNotification', ['Notifications', 'NotificationsUI', '$timeout', '$rootScope', '$sce', (Notifications, NotificationsUI, $timeout, $rootScope, $sce) ->
+angular.module('bc.active-notification', ['SafeApply']).directive 'activeNotification', ['Notifications', 'NotificationsUI', '$timeout', '$rootScope', '$sce', (Notifications, NotificationsUI, $timeout, $rootScope, $sce) ->
   restrict: 'E',
   template: '<div ng-show="showNotification" class="urgent-notification active" ng-class="className">' +
               '<span ng-bind-html="message"></span>' +
@@ -26,8 +26,7 @@ angular.module('bc.active-notification', []).directive 'activeNotification', ['N
         scope.className = colorForType notification.display.type
         if notification.display.customClass isnt ''
           scope.className += ' ' + notification.display.customClass
-        unless scope.$$phase
-          scope.$apply()
+        $rootScope.$safeApply()
 
         # Animate the notification apparition
         scope.showNotification = true

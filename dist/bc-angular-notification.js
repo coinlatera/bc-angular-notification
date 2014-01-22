@@ -4,7 +4,7 @@
 }).call(this);
 
 (function() {
-  angular.module('bc.active-notification', []).directive('activeNotification', [
+  angular.module('bc.active-notification', ['SafeApply']).directive('activeNotification', [
     'Notifications', 'NotificationsUI', '$timeout', '$rootScope', '$sce', function(Notifications, NotificationsUI, $timeout, $rootScope, $sce) {
       return {
         restrict: 'E',
@@ -28,9 +28,7 @@
               if (notification.display.customClass !== '') {
                 scope.className += ' ' + notification.display.customClass;
               }
-              if (!scope.$$phase) {
-                scope.$apply();
-              }
+              $rootScope.$safeApply();
               scope.showNotification = true;
               notificationElement = $(element[0]).find('.urgent-notification');
               notificationElement.css({
@@ -131,7 +129,7 @@
 }).call(this);
 
 (function() {
-  angular.module('bc.sticky-notification', ['ngAnimate']).directive('stickyNotification', [
+  angular.module('bc.sticky-notification', ['ngAnimate', 'SafeApply']).directive('stickyNotification', [
     'Notifications', '$rootScope', '$sce', function(Notifications, $rootScope, $sce) {
       return {
         restrict: 'E',
@@ -146,16 +144,20 @@
             updateNotifications();
           };
           $('body').bind('click', function() {
-            var i, notif, _i, _len, _ref;
+            var didSomething, i, notif, _i, _len, _ref;
+            didSomething = false;
             _ref = scope.stickyNotifications;
             for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
               notif = _ref[i];
               if (!notif.display.permanent && (new Date().getTime() - notif.general.displayTime > 100)) {
                 Notifications.markAsRead(notif);
+                didSomething = true;
               }
             }
-            updateNotifications();
-            scope.$apply();
+            if (didSomething) {
+              updateNotifications();
+              $rootScope.$safeApply();
+            }
             return true;
           });
           scope.colorForType = function(type) {

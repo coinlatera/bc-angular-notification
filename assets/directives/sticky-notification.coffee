@@ -1,4 +1,4 @@
-angular.module('bc.sticky-notification', ['ngAnimate']).directive 'stickyNotification', ['Notifications', '$rootScope', '$sce', (Notifications, $rootScope, $sce) ->
+angular.module('bc.sticky-notification', ['ngAnimate', 'SafeApply']).directive 'stickyNotification', ['Notifications', '$rootScope', '$sce', (Notifications, $rootScope, $sce) ->
   restrict: 'E',
   scope:
     stickyNotifications: '&'
@@ -19,11 +19,14 @@ angular.module('bc.sticky-notification', ['ngAnimate']).directive 'stickyNotific
       return
 
     $('body').bind 'click', () ->
+      didSomething = false
       for notif, i in scope.stickyNotifications
         if not notif.display.permanent and (new Date().getTime() - notif.general.displayTime > 100)
           Notifications.markAsRead notif
-      updateNotifications()
-      scope.$apply()
+          didSomething = true
+      if didSomething
+        updateNotifications()
+        $rootScope.$safeApply()
       return true
 
 
